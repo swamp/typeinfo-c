@@ -1,6 +1,6 @@
 depsversion = "0.0.0"
 
-name = "piot/swamp-typeinfo-c"
+name = "swamp/typeinfo-c"
 version = "0.0.0"
 
 [[dependencies]]
@@ -8,7 +8,7 @@ name = 'piot/clog'
 version = "*"
 
 [[dependencies]]
-name = 'piot/swamp-runtime'
+name = 'swamp/runtime-c'
 version = "*"
 
 [[dependencies]]
