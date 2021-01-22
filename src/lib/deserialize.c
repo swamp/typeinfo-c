@@ -2,6 +2,7 @@
  *  Copyright (c) Peter Bjorklund. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+#include <clog/clog.h>
 #include <flood/in_stream.h>
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/deserialize.h>
@@ -223,6 +224,7 @@ static int readType(FldInStream* stream, const SwtiType** outType)
     uint8_t typeValueRaw;
     int error;
     if ((error = fldInStreamReadUInt8(stream, &typeValueRaw)) != 0) {
+        CLOG_SOFT_ERROR("readType couldn't read type");
         return error;
     }
 
@@ -300,6 +302,17 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             error = 0;
             break;
         }
+        case SwtiTypeResourceName: {
+            SwtiIntType* intType = tc_malloc_type(SwtiIntType);
+            swtiInitInt(intType);
+            error = 0;
+            *outType = (const SwtiType*) intType;
+            break;
+        }
+
+        default:
+         CLOG_SOFT_ERROR("readType unknown type:%d", typeValue);
+         return -14;
     }
 
     return error;
@@ -324,7 +337,7 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
         return error;
     }
 
-    int correct = (major == 0) && (minor == 1) && (patch == 2);
+    int correct = (major == 0) && (minor == 1) && (patch == 3);
     if (!correct) {
         return -2;
     }
@@ -368,12 +381,14 @@ int swtiDeserialize(const uint8_t* octets, size_t octetCount, SwtiChunk* target)
     int octetsRead;
 
     if ((octetsRead = swtiDeserializeRaw(octets, octetCount, target)) < 0) {
+        CLOG_SOFT_ERROR("swtiDeserializeRaw %d", octetsRead)
         return octetsRead;
     }
 
     int error;
     error = swtiDeserializeFixup(target);
     if (error < 0) {
+        CLOG_SOFT_ERROR("swtiDeserializeFixup %d", octetsRead)
         return error;
     }
 

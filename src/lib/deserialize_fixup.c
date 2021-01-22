@@ -116,6 +116,7 @@ int swtiDeserializeFixup(SwtiChunk* chunk)
     for (size_t i = 0; i < chunk->typeCount; ++i) {
         const SwtiType* item = chunk->types[i];
         if ((error = fixupType((SwtiType*) item, chunk)) != 0) {
+            CLOG_SOFT_ERROR("fixupType %d %s", error, item->name)
             return error;
         }
     }

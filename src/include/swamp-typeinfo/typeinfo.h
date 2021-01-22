@@ -11,6 +11,7 @@
 
 struct FldOutStream;
 
+// Must be the same as github.com/swamp/compiler/src/typeinfo/typeinfo_serialize.go
 typedef enum SwtiTypeValue {
     SwtiTypeCustom,
     SwtiTypeFunction,
@@ -22,7 +23,8 @@ typedef enum SwtiTypeValue {
     SwtiTypeInt,
     SwtiTypeFixed,
     SwtiTypeBoolean,
-    SwtiTypeBlob
+    SwtiTypeBlob,
+    SwtiTypeResourceName,
 } SwtiTypeValue;
 
 typedef struct SwtiType {
