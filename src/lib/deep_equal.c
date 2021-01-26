@@ -141,6 +141,10 @@ static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
             error = 0;
             break;
         }
+        case SwtiTypeResourceName: {
+            error = 0;
+            break;
+        }
         case SwtiTypeInt: {
             error = 0;
             break;

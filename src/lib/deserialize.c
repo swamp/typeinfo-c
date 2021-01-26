@@ -311,8 +311,8 @@ static int readType(FldInStream* stream, const SwtiType** outType)
         }
 
         default:
-         CLOG_SOFT_ERROR("readType unknown type:%d", typeValue);
-         return -14;
+            CLOG_SOFT_ERROR("readType unknown type:%d", typeValue);
+            return -14;
     }
 
     return error;

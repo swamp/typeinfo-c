@@ -30,6 +30,7 @@ void swtiDestroyType(SwtiType* type)
         case SwtiTypeFixed:
         case SwtiTypeBoolean:
         case SwtiTypeBlob:
+        case SwtiTypeResourceName:
             break;
     }
     tc_free(type);

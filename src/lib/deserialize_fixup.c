@@ -105,6 +105,7 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
         case SwtiTypeFixed:
         case SwtiTypeInt:
         case SwtiTypeString:
+        case SwtiTypeResourceName:
             return 0;
     }
     return -1;
