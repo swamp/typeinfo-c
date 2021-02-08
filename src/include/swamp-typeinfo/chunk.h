@@ -20,6 +20,7 @@ void swtiChunkDestroy(SwtiChunk* self);
 
 int swtiChunkFind(const SwtiChunk* self, const struct SwtiType* type);
 int swtiChunkFindDeep(const SwtiChunk* self, const struct SwtiType* typeToSearchFor);
+int swtiChunkFindFromName(const SwtiChunk* self, const char* typeToSearchFor);
 const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t index);
 
 int swtiChunkCopy(const SwtiChunk* self, const struct SwtiType* type);

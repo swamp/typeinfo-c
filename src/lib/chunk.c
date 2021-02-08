@@ -66,6 +66,21 @@ int swtiChunkFind(const SwtiChunk* self, const SwtiType* typeToSearchFor)
     return -1;
 }
 
+int swtiChunkFindFromName(const SwtiChunk* self, const char* typeToSearchFor)
+{
+    for (size_t i = 0; i < self->typeCount; ++i) {
+        const struct SwtiType* type = self->types[i];
+        if (type == 0) {
+            continue;
+        }
+        if (tc_str_equal(type->name, typeToSearchFor)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {

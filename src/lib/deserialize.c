@@ -339,6 +339,7 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
 
     int correct = (major == 0) && (minor == 1) && (patch == 3);
     if (!correct) {
+        CLOG_SOFT_ERROR("got wrong version. Expected 0.1.3 and got %d.%d.%d", major, minor, patch)
         return -2;
     }
 
