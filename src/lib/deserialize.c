@@ -309,7 +309,13 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             *outType = (const SwtiType*) intType;
             break;
         }
-
+        case SwtiTypeChar: {
+            SwtiCharType* ch = tc_malloc_type(SwtiCharType);
+            swtiInitChar(ch);
+            error = 0;
+            *outType = (const SwtiType*) ch;
+            break;
+        }
         default:
             CLOG_SOFT_ERROR("readType unknown type:%d", typeValue);
             return -14;

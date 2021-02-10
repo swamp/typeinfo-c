@@ -13,6 +13,13 @@ void swtiInitString(SwtiStringType* self)
     self->internal.hash = 0x0000;
 }
 
+void swtiInitChar(SwtiCharType* self)
+{
+    self->internal.type = SwtiTypeChar;
+    self->internal.name = "Char";
+    self->internal.hash = 0x0000;
+}
+
 void swtiInitInt(SwtiIntType* self)
 {
     self->internal.type = SwtiTypeInt;

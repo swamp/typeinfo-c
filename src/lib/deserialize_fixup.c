@@ -105,9 +105,12 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
         case SwtiTypeFixed:
         case SwtiTypeInt:
         case SwtiTypeString:
+        case SwtiTypeChar:
         case SwtiTypeResourceName:
             return 0;
     }
+
+    CLOG_SOFT_ERROR("Don't know how to fixup type %d", type->type);
     return -1;
 }
 

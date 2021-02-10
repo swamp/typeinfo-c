@@ -25,6 +25,7 @@ typedef enum SwtiTypeValue {
     SwtiTypeBoolean,
     SwtiTypeBlob,
     SwtiTypeResourceName,
+    SwtiTypeChar,
 } SwtiTypeValue;
 
 typedef struct SwtiType {
@@ -103,7 +104,11 @@ SWTI_TYPE_END(BlobType)
 SWTI_TYPE_START(StringType)
 SWTI_TYPE_END(StringType)
 
+SWTI_TYPE_START(CharType)
+SWTI_TYPE_END(CharType)
+
 void swtiInitString(SwtiStringType* self);
+void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
 void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
