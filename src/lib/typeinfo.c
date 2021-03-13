@@ -73,6 +73,17 @@ void swtiInitFunction(SwtiFunctionType* self, const SwtiType** types, size_t typ
     tc_memcpy_type_n(self->parameterTypes, types, typeCount);
 }
 
+void swtiInitTuple(SwtiTupleType* self, const SwtiType** types, size_t typeCount)
+{
+    self->internal.type = SwtiTypeTuple;
+    self->internal.name = "Tuple";
+    self->internal.hash = 0x0000;
+    self->parameterCount = typeCount;
+    self->parameterTypes = calloc(typeCount, sizeof(SwtiType*));
+    tc_memcpy_type_n(self->parameterTypes, types, typeCount);
+}
+
+
 void swtiInitRecord(SwtiRecordType* self)
 {
     self->internal.type = SwtiTypeRecord;

@@ -200,6 +200,20 @@ static int readFunction(FldInStream* stream, SwtiFunctionType** outFn)
     return 0;
 }
 
+static int readTuple(FldInStream* stream, SwtiTupleType** outTuple)
+{
+    struct SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
+    swtiInitTuple(tuple, 0, 0);
+    int error;
+    if ((error = readTypeRefs(stream, &tuple->parameterTypes, &tuple->parameterCount)) != 0) {
+        *outTuple = 0;
+        return error;
+    }
+
+    *outTuple = tuple;
+    return 0;
+}
+
 static int readAlias(FldInStream* stream, SwtiAliasType** outAlias)
 {
     SwtiAliasType* alias = tc_malloc_type(SwtiAliasType);
@@ -316,8 +330,14 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             *outType = (const SwtiType*) ch;
             break;
         }
+        case SwtiTypeTuple: {
+            SwtiTupleType* tuple;
+            error = readTuple(stream, &tuple);
+            *outType = (const SwtiType*) tuple;
+            break;
+        }
         default:
-            CLOG_SOFT_ERROR("readType unknown type:%d", typeValue);
+            CLOG_SOFT_ERROR("type information: readType unknown type:%d", typeValue);
             return -14;
     }
 
@@ -343,9 +363,9 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
         return error;
     }
 
-    int correct = (major == 0) && (minor == 1) && (patch == 3);
+    int correct = (major == 0) && (minor == 1) && (patch == 4);
     if (!correct) {
-        CLOG_SOFT_ERROR("got wrong version. Expected 0.1.3 and got %d.%d.%d", major, minor, patch)
+        CLOG_SOFT_ERROR("got wrong version. Expected 0.1.4 and got %d.%d.%d", major, minor, patch)
         return -2;
     }
 

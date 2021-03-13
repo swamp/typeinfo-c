@@ -83,6 +83,10 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
             SwtiFunctionType* fn = (SwtiFunctionType*) type;
             return fixupTypeRefs((const SwtiType**) fn->parameterTypes, fn->parameterCount, chunk);
         }
+        case SwtiTypeTuple: {
+            SwtiTupleType * fn = (SwtiTupleType*) type;
+            return fixupTypeRefs((const SwtiType**) fn->parameterTypes, fn->parameterCount, chunk);
+        }
         case SwtiTypeAlias: {
             SwtiAliasType* alias = (SwtiAliasType*) type;
             return fixupTypeRef((const SwtiType**) &alias->targetType, chunk);
@@ -110,7 +114,7 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
             return 0;
     }
 
-    CLOG_SOFT_ERROR("Don't know how to fixup type %d", type->type);
+    CLOG_SOFT_ERROR("type information: don't know how to fixup type %d", type->type);
     return -1;
 }
 

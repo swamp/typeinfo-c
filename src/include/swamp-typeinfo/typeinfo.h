@@ -26,6 +26,7 @@ typedef enum SwtiTypeValue {
     SwtiTypeBlob,
     SwtiTypeResourceName,
     SwtiTypeChar,
+    SwtiTypeTuple
 } SwtiTypeValue;
 
 typedef struct SwtiType {
@@ -107,6 +108,11 @@ SWTI_TYPE_END(StringType)
 SWTI_TYPE_START(CharType)
 SWTI_TYPE_END(CharType)
 
+SWTI_TYPE_START(TupleType)
+    size_t parameterCount;
+    const SwtiType** parameterTypes;
+SWTI_TYPE_END(TupleType)
+
 void swtiInitString(SwtiStringType* self);
 void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
@@ -114,12 +120,14 @@ void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitBlob(SwtiBlobType* self);
 void swtiInitFunction(SwtiFunctionType* self, const SwtiType* types[], size_t typeCount);
+void swtiInitTuple(SwtiTupleType* self, const SwtiType* types[], size_t typeCount);
 void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount);
 void swtiInitRecord(SwtiRecordType* self);
 void swtiInitAlias(SwtiAliasType* self, const char* name, const SwtiType* targetType);
 void swtiInitCustom(SwtiCustomType* self, const SwtiCustomTypeVariant variants[], size_t variantCount);
 void swtiInitCustomWithGenerics(SwtiCustomType* self, const SwtiType* types[], size_t typeCount,
                                 const SwtiCustomTypeVariant variants[], size_t variantCount);
+
 void swtiInitArray(SwtiArrayType* self);
 void swtiInitList(SwtiListType* self);
 void swtiDebugOutput(struct FldOutStream* fp, const SwtiType* type);
