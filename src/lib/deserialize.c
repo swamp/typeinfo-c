@@ -54,6 +54,7 @@ static int readTypeRefs(FldInStream* stream, const SwtiType*** outTypes, size_t*
     SwtiType** types = tc_malloc_type_count(SwtiType*, count);
     for (uint8_t i = 0; i < count; i++) {
         if ((error = readTypeRef(stream, &types[i])) != 0) {
+            CLOG_ERROR("couldn't read type ref %d", error);
             return error;
         }
     }

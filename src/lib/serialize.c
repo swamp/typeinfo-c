@@ -157,6 +157,16 @@ static int writeFunction(FldOutStream* stream, const SwtiFunctionType* fn)
     return 0;
 }
 
+static int writeTuple(FldOutStream* stream, const SwtiTupleType* tuple)
+{
+    int error;
+    if ((error = writeTypeRefs(stream, tuple->parameterTypes, tuple->parameterCount)) != 0) {
+        return error;
+    }
+
+    return 0;
+}
+
 static int writeAlias(FldOutStream* stream, const SwtiAliasType* alias)
 {
     int error;
@@ -224,6 +234,18 @@ static int writeType(FldOutStream* stream, const SwtiType* type)
             error = 0;
             break;
         }
+        case SwtiTypeResourceName: {
+            error = 0;
+            break;
+        }
+        case SwtiTypeChar: {
+            error = 0;
+            break;
+        }
+        case SwtiTypeTuple: {
+            error = writeTuple(stream, (const SwtiTupleType*) type);
+            break;
+        }
     }
 
     return error;
@@ -238,7 +260,7 @@ int swtiSerializeToStream(FldOutStream* stream, const struct SwtiChunk* source)
 
     major = 0;
     minor = 1;
-    patch = 2;
+    patch = 4;
 
     int tell = stream->pos;
 

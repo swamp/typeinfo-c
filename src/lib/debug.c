@@ -73,6 +73,19 @@ static void printFunctionType(FldOutStream* fp, const SwtiFunctionType* fn)
     fldOutStreamWrites(fp, ")");
 }
 
+static void printTupleType(FldOutStream* fp, const SwtiTupleType * fn)
+{
+    fldOutStreamWrites(fp, "(");
+    for (size_t i = 0; i < fn->parameterCount; i++) {
+        if (i > 0) {
+            fldOutStreamWrites(fp, ", ");
+        }
+        const SwtiType* sub = fn->parameterTypes[i];
+        swtiDebugOutput(fp, sub);
+    }
+    fldOutStreamWrites(fp, ")");
+}
+
 static void printAliasType(FldOutStream* fp, const SwtiAliasType* alias)
 {
     fldOutStreamWritef(fp, "%s => ", alias->internal.name);
@@ -115,6 +128,11 @@ static void printListType(FldOutStream* fp, const SwtiListType* list)
 static void printStringType(FldOutStream* fp, const SwtiStringType* string)
 {
     fldOutStreamWrites(fp, "String");
+}
+
+static void printCharType(FldOutStream* fp, const SwtiCharType * ch)
+{
+    fldOutStreamWrites(fp, "Char");
 }
 
 static void printIntType(FldOutStream* fp, const SwtiIntType* intType)
@@ -178,10 +196,29 @@ void swtiDebugOutput(FldOutStream* fp, const SwtiType* type)
         case SwtiTypeFixed:
             printFixedType(fp, (const SwtiFixedType*) type);
             break;
+        case SwtiTypeTuple:
+            printTupleType(fp, (const SwtiTupleType*) type);
+            break;
+        case SwtiTypeChar:
+            printCharType(fp, (const SwtiCharType*) type);
+            break;
 
         default:
             CLOG_ERROR("unknown %d", type->type);
     }
+}
+
+char* swtiDebugString(const SwtiType* type, char* buf, size_t maxBuf)
+{
+    FldOutStream outStream;
+
+    fldOutStreamInit(&outStream, buf, maxBuf);
+
+    swtiDebugOutput(&outStream, type);
+
+    fldOutStreamWriteUInt8(&outStream, 0);
+
+    return buf;
 }
 
 const SwtiType* swtiUnalias(const SwtiType* maybeAlias)

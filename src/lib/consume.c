@@ -62,6 +62,16 @@ static int functionConsume(SwtiChunk* target, const SwtiFunctionType* source, co
     return typesConsume(target, source->parameterTypes, &fn->parameterTypes, source->parameterCount);
 }
 
+static int tupleConsume(SwtiChunk* target, const SwtiTupleType* source, const SwtiTupleType** out)
+{
+    SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
+    CLOG_VERBOSE("tuple count %d", source->parameterCount);
+    swtiInitTuple(tuple, 0, source->parameterCount);
+    *out = tuple;
+
+    return typesConsume(target, source->parameterTypes, &tuple->parameterTypes, source->parameterCount);
+}
+
 static int aliasConsume(SwtiChunk* target, const SwtiAliasType* source, const SwtiAliasType** out)
 {
     SwtiAliasType* alias = tc_malloc_type(SwtiAliasType);
@@ -136,6 +146,10 @@ static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType
             error = functionConsume(target, (const SwtiFunctionType*) source, (const SwtiFunctionType**) out);
             break;
         }
+        case SwtiTypeTuple: {
+            error = tupleConsume(target, (const SwtiTupleType*) source, (const SwtiTupleType**) out);
+            break;
+        }
         case SwtiTypeAlias: {
             error = aliasConsume(target, (const SwtiAliasType*) source, (const SwtiAliasType**) out);
             break;
@@ -156,6 +170,20 @@ static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType
             SwtiStringType* str = tc_malloc_type(SwtiStringType);
             swtiInitString(str);
             *out = (const SwtiType*) str;
+            error = 0;
+            break;
+        }
+        case SwtiTypeResourceName: {
+            SwtiResourceNameType* resourceName = tc_malloc_type(SwtiResourceNameType);
+            swtiInitResourceName(resourceName);
+            *out = (const SwtiType*) resourceName;
+            error = 0;
+            break;
+        }
+        case SwtiTypeChar: {
+            SwtiCharType * charType = tc_malloc_type(SwtiCharType);
+            swtiInitChar(charType);
+            *out = (const SwtiType*) charType;
             error = 0;
             break;
         }
@@ -190,6 +218,7 @@ static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType
     }
 
     if (error < 0) {
+        CLOG_ERROR("couldn't serialize type information");
         return error;
     }
 

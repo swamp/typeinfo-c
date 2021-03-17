@@ -60,6 +60,15 @@ static int functionDeepEqual(const SwtiFunctionType* a, const SwtiFunctionType* 
     return typesDeepEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
 }
 
+static int tupleDeepEqual(const SwtiTupleType* a, const SwtiTupleType* b)
+{
+    if (a->parameterCount != b->parameterCount) {
+        return -1;
+    }
+
+    return typesDeepEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
+}
+
 static int aliasDeepEqual(const SwtiAliasType* a, const SwtiAliasType* b)
 {
     if (!tc_str_equal(a->internal.name, b->internal.name)) {
@@ -121,6 +130,10 @@ static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
             error = functionDeepEqual((const SwtiFunctionType*) a, (const SwtiFunctionType*) b);
             break;
         }
+        case SwtiTypeTuple: {
+            error = tupleDeepEqual((const SwtiTupleType *) a, (const SwtiTupleType*) b);
+            break;
+        }
         case SwtiTypeAlias: {
             error = aliasDeepEqual((const SwtiAliasType*) a, (const SwtiAliasType*) b);
             break;
@@ -138,6 +151,10 @@ static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
             break;
         }
         case SwtiTypeString: {
+            error = 0;
+            break;
+        }
+        case SwtiTypeChar: {
             error = 0;
             break;
         }

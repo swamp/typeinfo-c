@@ -13,6 +13,13 @@ void swtiInitString(SwtiStringType* self)
     self->internal.hash = 0x0000;
 }
 
+void swtiInitResourceName(SwtiResourceNameType* self)
+{
+    self->internal.type = SwtiTypeResourceName;
+    self->internal.name = "ResourceName";
+    self->internal.hash = 0x0000;
+}
+
 void swtiInitChar(SwtiCharType* self)
 {
     self->internal.type = SwtiTypeChar;
@@ -80,7 +87,9 @@ void swtiInitTuple(SwtiTupleType* self, const SwtiType** types, size_t typeCount
     self->internal.hash = 0x0000;
     self->parameterCount = typeCount;
     self->parameterTypes = calloc(typeCount, sizeof(SwtiType*));
-    tc_memcpy_type_n(self->parameterTypes, types, typeCount);
+    if (types != 0) {
+        tc_memcpy_octets(self->parameterTypes, types, sizeof(SwtiType*) * typeCount);
+    }
 }
 
 

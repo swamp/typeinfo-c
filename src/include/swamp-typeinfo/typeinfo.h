@@ -105,6 +105,9 @@ SWTI_TYPE_END(BlobType)
 SWTI_TYPE_START(StringType)
 SWTI_TYPE_END(StringType)
 
+SWTI_TYPE_START(ResourceNameType)
+SWTI_TYPE_END(ResourceNameType)
+
 SWTI_TYPE_START(CharType)
 SWTI_TYPE_END(CharType)
 
@@ -114,6 +117,7 @@ SWTI_TYPE_START(TupleType)
 SWTI_TYPE_END(TupleType)
 
 void swtiInitString(SwtiStringType* self);
+void swtiInitResourceName(SwtiResourceNameType* self);
 void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
 void swtiInitFixed(SwtiFixedType* self);
@@ -131,6 +135,7 @@ void swtiInitCustomWithGenerics(SwtiCustomType* self, const SwtiType* types[], s
 void swtiInitArray(SwtiArrayType* self);
 void swtiInitList(SwtiListType* self);
 void swtiDebugOutput(struct FldOutStream* fp, const SwtiType* type);
+char* swtiDebugString(const SwtiType* type, char* buf, size_t maxCount);
 
 const SwtiType* swtiUnalias(const SwtiType* maybeAlias);
 const SwtiListType* swtiList(const SwtiType* maybeAlias);

@@ -7,6 +7,7 @@
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/deep_equal.h>
 #include <swamp-typeinfo/typeinfo.h>
+#include <swamp-typeinfo/consume.h>
 #include <tiny-libc/tiny_libc.h>
 
 void swtiChunkInit(SwtiChunk* self, const SwtiType** types, size_t typeCount)
@@ -31,6 +32,8 @@ void swtiDestroyType(SwtiType* type)
         case SwtiTypeBoolean:
         case SwtiTypeBlob:
         case SwtiTypeResourceName:
+        case SwtiTypeTuple:
+        case SwtiTypeChar:
             break;
     }
     tc_free(type);
@@ -96,6 +99,22 @@ int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
     }
 
     return -1;
+}
+
+int swtiChunkInitOnlyOneType(SwtiChunk* targetChunk, const SwtiType *rootType, int* index)
+{
+    swtiChunkInit(targetChunk, 0, 0);
+    targetChunk->maxCount = 8*1024;
+    targetChunk->types = tc_malloc_type_count(const SwtiType*, targetChunk->maxCount);
+
+    int rootTypeIndex;
+    if ((rootTypeIndex = swtiTypeConsume(targetChunk, rootType)) < 0) {
+        *index = rootTypeIndex;
+        return rootTypeIndex;
+    }
+
+    *index = rootTypeIndex;
+    return 0;
 }
 
 const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t index)
