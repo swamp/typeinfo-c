@@ -3,11 +3,27 @@ project(swamp_typeinfo_example C)
 
 set(CMAKE_C_STANDARD 99)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(isDebug TRUE)
+else()
+    set(isDebug FALSE)
+endif()
+
+
+
 set(deps ../../deps/)
 
 add_executable(swamp_typeinfo_example
     main.c
 )
+
+
+if (isDebug)
+    message("Debug build detected")
+    target_compile_definitions(swamp_typeinfo_example PUBLIC CONFIGURATION_DEBUG=1)
+endif()
+
+target_compile_options(swamp_typeinfo PRIVATE -Wall -Wextra -Wshadow -Weffc++ -Wstrict-aliasing -ansi -pedantic -Wno-unused-function -Wno-unused-parameter)
 
 target_include_directories(swamp_typeinfo_example PRIVATE ${deps}clog/src/include)
 target_include_directories(swamp_typeinfo_example PRIVATE ${deps}tiny-libc/src/include)

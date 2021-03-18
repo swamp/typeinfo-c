@@ -92,10 +92,10 @@ static int readVariants(FldInStream* stream, SwtiCustomType* custom, uint8_t cou
 static int readCustomType(FldInStream* stream, SwtiCustomType** outCustom)
 {
     SwtiCustomType* custom = tc_malloc_type(SwtiCustomType);
-    swtiInitCustom(custom, 0, 0);
+    swtiInitCustom(custom, 0, 0, 0);
     int error;
 
-    if ((error = readString(stream, &custom->name)) != 0) {
+    if ((error = readString(stream, &custom->internal.name)) != 0) {
         return error;
     }
 
@@ -103,6 +103,11 @@ static int readCustomType(FldInStream* stream, SwtiCustomType** outCustom)
     if ((error = fldInStreamReadUInt8(stream, &variantCount)) != 0) {
         return error;
     }
+
+    if (variantCount > 32) {
+        CLOG_ERROR("too many variants %d", variantCount);
+    }
+
     custom->variantCount = variantCount;
 
     if ((error = readVariants(stream, custom, variantCount)) != 0) {
@@ -203,7 +208,7 @@ static int readFunction(FldInStream* stream, SwtiFunctionType** outFn)
 
 static int readTuple(FldInStream* stream, SwtiTupleType** outTuple)
 {
-    struct SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
+    SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
     swtiInitTuple(tuple, 0, 0);
     int error;
     if ((error = readTypeRefs(stream, &tuple->parameterTypes, &tuple->parameterCount)) != 0) {
@@ -338,7 +343,7 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             break;
         }
         default:
-            CLOG_SOFT_ERROR("type information: readType unknown type:%d", typeValue);
+            CLOG_ERROR("type information: readType unknown type:%d", typeValue);
             return -14;
     }
 
@@ -395,7 +400,7 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
     return octetsRead;
 }
 
-int swtiDeserializeRaw(const uint8_t* octets, size_t octetCount, SwtiChunk* target)
+static int swtiDeserializeRaw(const uint8_t* octets, size_t octetCount, SwtiChunk* target)
 {
     FldInStream stream;
 

@@ -20,26 +20,6 @@ static void tyran_log_implementation(enum clog_type type, const char* string)
     fprintf(stderr, "%s\n", string);
 }
 
-void debugOutput(const SwtiChunk* chunk)
-{
-#define TEMP_BUFFER_SIZE (64 * 1024)
-    uint8_t debugOut[TEMP_BUFFER_SIZE];
-    FldOutStream stream;
-    fldOutStreamInit(&stream, debugOut, TEMP_BUFFER_SIZE);
-
-    fldOutStreamRewind(&stream);
-    for (size_t i = 0; i < chunk->typeCount; i++) {
-        swtiDebugOutput(&stream, chunk->types[i]);
-        fldOutStreamWriteUInt8(&stream, '\n');
-    }
-    fldOutStreamWriteUInt8(&stream, 0);
-
-    const char* afterFixup = (const char*) debugOut;
-
-    fprintf(stdout, "\n\n----- After fixup:\n");
-    fputs(afterFixup, stdout);
-}
-
 void test()
 {
     SwtiStringType s;
@@ -76,7 +56,7 @@ void test()
 
     const SwtiType* generics[] = {(const SwtiType*) &integer};
     SwtiCustomType c;
-    swtiInitCustomWithGenerics(&c, generics, 1, variants, sizeof(variants) / sizeof(variants[0]));
+    swtiInitCustomWithGenerics(&c, "Result", generics, 1, variants, sizeof(variants) / sizeof(variants[0]));
 
     SwtiAliasType maybe;
 
@@ -92,18 +72,15 @@ void test()
     swtiInitFunction(&fn, params, sizeof(params) / sizeof(params[0]));
 
     uint8_t debugOut[2048];
-    FldOutStream stream;
-    fldOutStreamInit(&stream, debugOut, 2048);
 
-    swtiDebugOutput(&stream, (const SwtiType*) &fn);
-    fldOutStreamWriteUInt8(&stream, 0);
+    swtiDebugString((const SwtiType*) &fn, debugOut, 2048);
     const char* hack1 = (const char*) debugOut;
 
-    fputs(hack1, stdout);
+    fprintf(stderr, "Constructed:\n%s\n", hack1);
 
     SwtiChunk chunk;
 
-    const uint8_t octets[] = {0x08,
+    const uint8_t octets[] = {0,1,4,0x09,
                               SwtiTypeInt,
                               SwtiTypeList,
                               0x00,
@@ -130,6 +107,13 @@ void test()
                               1,
                               2,
                               SwtiTypeCustom,
+                              0x6,
+                              'R',
+                              'e',
+                              's',
+                              'u',
+                              'l',
+                              't',
                               2,
                               5,
                               'M',
@@ -138,36 +122,37 @@ void test()
                               'b',
                               'e',
                               1,
-                              99,
+                              2,
                               3,
                               'N',
                               'o',
                               't',
-                              0};
+                              0,
+                              SwtiTypeTuple,
+                              2,
+                              1,0};
 
-    int error = swtiDeserializeRaw(octets, sizeof(octets), &chunk);
-    if (error != 0) {
-        CLOG_ERROR("problem with deserialization raw typeinformation");
+    int error = swtiDeserialize(octets, sizeof(octets), &chunk);
+    if (error < 0) {
+        CLOG_ERROR("problem with deserialization raw typeinformation %d");
     }
 
-    fprintf(stdout, "\n\n----Deserialize to raw: \n");
-    for (size_t i = 0; i < chunk.typeCount; i++) {
-        fldOutStreamRewind(&stream);
-        swtiDebugOutput(&stream, chunk.types[i]);
-        fldOutStreamWriteUInt8(&stream, 0);
-        const char* deserializedLine = (const char*) debugOut;
-        fprintf(stdout, "%zu: %s\n", i, deserializedLine);
+    swtiChunkDebugOutput(&chunk, "after deserialization");
+
+
+    SwtiChunk copyChunk;
+    int newIndex;
+    int worked = swtiChunkInitOnlyOneType(&copyChunk, chunk.types[8], &newIndex);
+    if (worked < 0) {
+        CLOG_ERROR("could not make a copy");
     }
 
-    swtiDeserializeFixup(&chunk);
-
-    debugOutput(&chunk);
+    CLOG_INFO("newIndex %d", newIndex);
+    swtiChunkDebugOutput(&copyChunk, "after copy");
 }
 
-int main()
-{
-    g_clog.log = tyran_log_implementation;
 
+void file() {
     FILE* f = fopen("output.swamp-typeinfo", "rb");
     if (f == 0) {
         CLOG_ERROR("can not find the file");
@@ -186,7 +171,7 @@ int main()
         CLOG_ERROR("problem with deserialization raw typeinformation");
     }
     printf("before:-----------------\n");
-    debugOutput(&chunk);
+    swtiChunkDebugOutput(&chunk, "before");
 
     uint8_t* outOctets = malloc(16 * 1024);
 
@@ -203,7 +188,7 @@ int main()
 
     printf("WE GOT THIS BACK:-----------------\n");
 
-    debugOutput(&deserializedChunk);
+    swtiChunkDebugOutput(&deserializedChunk, "we got this back");
 
     SwtiChunk copyChunk;
     copyChunk.typeCount = 0;
@@ -221,7 +206,15 @@ int main()
 
     printf("Copied:-----------------\n");
 
-    debugOutput(&copyChunk);
+    swtiChunkDebugOutput(&copyChunk, "copied");
+
+}
+
+int main()
+{
+    g_clog.log = tyran_log_implementation;
+
+    test();
 
     return 0;
 }

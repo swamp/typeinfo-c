@@ -79,7 +79,7 @@ static int writeCustomType(FldOutStream* stream, const SwtiCustomType* custom)
 {
     int error;
 
-    if ((error = writeString(stream, custom->name)) != 0) {
+    if ((error = writeString(stream, custom->internal.name)) != 0) {
         return error;
     }
 

@@ -57,7 +57,6 @@ typedef struct SwtiCustomTypeVariant {
 
 SWTI_TYPE_START(CustomType)
 SwtiGenericParams generic;
-const char* name;
 size_t variantCount;
 const SwtiCustomTypeVariant* variantTypes;
 SWTI_TYPE_END(CustomType)
@@ -128,8 +127,8 @@ void swtiInitTuple(SwtiTupleType* self, const SwtiType* types[], size_t typeCoun
 void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount);
 void swtiInitRecord(SwtiRecordType* self);
 void swtiInitAlias(SwtiAliasType* self, const char* name, const SwtiType* targetType);
-void swtiInitCustom(SwtiCustomType* self, const SwtiCustomTypeVariant variants[], size_t variantCount);
-void swtiInitCustomWithGenerics(SwtiCustomType* self, const SwtiType* types[], size_t typeCount,
+void swtiInitCustom(SwtiCustomType* self, const char* name,  const SwtiCustomTypeVariant variants[], size_t variantCount);
+void swtiInitCustomWithGenerics(SwtiCustomType* self, const char* name, const SwtiType* types[], size_t typeCount,
                                 const SwtiCustomTypeVariant variants[], size_t variantCount);
 
 void swtiInitArray(SwtiArrayType* self);

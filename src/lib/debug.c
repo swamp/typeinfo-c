@@ -45,11 +45,12 @@ static void printCustomType(FldOutStream* fp, const SwtiCustomType* custom)
 {
     // fldOutStreamWrites(fp, "|");
     // fldOutStreamWritef(fp, "%s ", custom->internal.name);
-    fldOutStreamWritef(fp, "%s(", custom->name);
+    fldOutStreamWritef(fp, "%s", custom->internal.name);
     printGenericParams(fp, &custom->generic);
     if (custom->variantCount == 0) {
         return;
     }
+    fldOutStreamWritef(fp, "(");
     for (size_t i = 0; i < custom->variantCount; i++) {
         if (i > 0) {
             fldOutStreamWrites(fp, " | ");

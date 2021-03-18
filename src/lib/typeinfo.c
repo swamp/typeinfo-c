@@ -110,10 +110,10 @@ void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fi
     tc_memcpy_type_n(self->fields, fields, fieldCount);
 }
 
-void swtiInitCustom(SwtiCustomType* self, const SwtiCustomTypeVariant variants[], size_t variantCount)
+void swtiInitCustom(SwtiCustomType* self, const char* name, const SwtiCustomTypeVariant variants[], size_t variantCount)
 {
     self->internal.type = SwtiTypeCustom;
-    self->internal.name = "Custom";
+    self->internal.name = name;
     self->internal.hash = 0x0000;
     self->variantCount = variantCount;
     self->variantTypes = calloc(variantCount, sizeof(SwtiCustomTypeVariant));
@@ -129,10 +129,10 @@ static void initGenerics(SwtiGenericParams* self, const SwtiType* types[], size_
     tc_memcpy_type_n(self->genericTypes, types, typeCount);
 }
 
-void swtiInitCustomWithGenerics(SwtiCustomType* self, const SwtiType* types[], size_t typeCount,
+void swtiInitCustomWithGenerics(SwtiCustomType* self, const char* name,  const SwtiType* types[], size_t typeCount,
                                 const SwtiCustomTypeVariant variants[], size_t variantCount)
 {
-    swtiInitCustom(self, variants, variantCount);
+    swtiInitCustom(self, name, variants, variantCount);
     initGenerics(&self->generic, types, typeCount);
 }
 

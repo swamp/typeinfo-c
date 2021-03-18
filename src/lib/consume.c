@@ -12,13 +12,16 @@ static int typeConsume(SwtiChunk* target, const SwtiType* original, const SwtiTy
 static int typesConsume(SwtiChunk* target, const SwtiType** source, const SwtiType*** out, size_t count)
 {
     int error;
-    *out = tc_malloc_type_count(const SwtiType*, count);
+    *out = 0;
+    const SwtiType** targetArray = tc_malloc_type_count(const SwtiType*, count);
 
     for (size_t i = 0; i < count; ++i) {
-        if ((error = typeConsume(target, source[i], out[i])) < 0) {
+        if ((error = typeConsume(target, source[i], &targetArray[i])) < 0) {
             return error;
         }
     }
+
+    *out = targetArray;
 
     return 0;
 }
@@ -34,11 +37,11 @@ static int variantConsume(SwtiChunk* target, const SwtiCustomTypeVariant* source
 static int customConsume(SwtiChunk* target, const SwtiCustomType* source, const SwtiCustomType** out)
 {
     SwtiCustomType* custom = tc_malloc_type(SwtiCustomType);
-    swtiInitCustom(custom, 0, 0);
+    swtiInitCustom(custom, tc_str_dup(source->internal.name), 0, 0);
 
     custom->variantTypes = tc_malloc_type_count(SwtiCustomTypeVariant, source->variantCount);
     custom->variantCount = source->variantCount;
-    custom->name = tc_str_dup(source->name);
+
 
     *out = custom;
 
