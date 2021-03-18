@@ -17,14 +17,14 @@ int fixupTypeRef(const SwtiType** type, const SwtiChunk* chunk)
         return -2;
     }
     if (ptrValue >= chunk->typeCount) {
-        CLOG_SOFT_ERROR("something is wrong here. index is more than number of entries.")
+        CLOG_ERROR("something is wrong here. index is more than number of entries.")
         *type = 0;
         return -3;
     }
     *type = chunk->types[ptrValue];
 
     if (chunk->types[ptrValue]->index != ptrValue) {
-        CLOG_SOFT_ERROR("problem");
+        CLOG_ERROR("problem");
         *type = 0;
         return -4;
     }
@@ -84,8 +84,8 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
             return fixupTypeRefs((const SwtiType**) fn->parameterTypes, fn->parameterCount, chunk);
         }
         case SwtiTypeTuple: {
-            SwtiTupleType * fn = (SwtiTupleType*) type;
-            return fixupTypeRefs((const SwtiType**) fn->parameterTypes, fn->parameterCount, chunk);
+            SwtiTupleType* tuple = (SwtiTupleType*) type;
+            return fixupTypeRefs((const SwtiType**) tuple->parameterTypes, tuple->parameterCount, chunk);
         }
         case SwtiTypeAlias: {
             SwtiAliasType* alias = (SwtiAliasType*) type;
@@ -114,7 +114,7 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
             return 0;
     }
 
-    CLOG_SOFT_ERROR("type information: don't know how to fixup type %d", type->type);
+    CLOG_ERROR("type information: don't know how to fixup type %d", type->type);
     return -1;
 }
 
