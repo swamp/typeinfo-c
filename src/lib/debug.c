@@ -19,7 +19,7 @@ static void printGenericParams(FldOutStream* fp, const SwtiGenericParams* params
             fldOutStreamWrites(fp, " -> ");
         }
         const SwtiType* sub = params->genericTypes[i];
-        swtiDebugOutput(fp, sub);
+        swtiDebugOutput(fp, 0, sub);
     }
     fldOutStreamWrites(fp, ">");
 }
@@ -36,7 +36,7 @@ static void printCustomTypeVariant(FldOutStream* fp, const SwtiCustomTypeVariant
             fldOutStreamWrites(fp, ", ");
         }
         const SwtiType* sub = variant->paramTypes[i];
-        swtiDebugOutput(fp, sub);
+        swtiDebugOutput(fp, 0, sub);
     }
     fldOutStreamWrites(fp, ")");
 }
@@ -69,7 +69,7 @@ static void printFunctionType(FldOutStream* fp, const SwtiFunctionType* fn)
             fldOutStreamWrites(fp, " -> ");
         }
         const SwtiType* sub = fn->parameterTypes[i];
-        swtiDebugOutput(fp, sub);
+        swtiDebugOutput(fp, 0, sub);
     }
     fldOutStreamWrites(fp, ")");
 }
@@ -82,21 +82,25 @@ static void printTupleType(FldOutStream* fp, const SwtiTupleType * fn)
             fldOutStreamWrites(fp, ", ");
         }
         const SwtiType* sub = fn->parameterTypes[i];
-        swtiDebugOutput(fp, sub);
+        swtiDebugOutput(fp, 0, sub);
     }
     fldOutStreamWrites(fp, ")");
 }
 
-static void printAliasType(FldOutStream* fp, const SwtiAliasType* alias)
+static void printAliasType(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiAliasType* alias)
 {
-    fldOutStreamWritef(fp, "%s => ", alias->internal.name);
-    swtiDebugOutput(fp, alias->targetType);
+    if (flags & SwtiDebugOutputFlagsExpandAlias) {
+        fldOutStreamWritef(fp, "%s => ", alias->internal.name);
+        swtiDebugOutput(fp, flags, alias->targetType);
+    } else {
+        fldOutStreamWritef(fp, "%s", alias->internal.name);
+    }
 }
 
 static void printRecordTypeField(FldOutStream* fp, const SwtiRecordTypeField* field)
 {
     fldOutStreamWritef(fp, "%s : ", field->name);
-    swtiDebugOutput(fp, field->fieldType);
+    swtiDebugOutput(fp, 0, field->fieldType);
 }
 
 static void printRecordType(FldOutStream* fp, const SwtiRecordType* record)
@@ -115,14 +119,14 @@ static void printRecordType(FldOutStream* fp, const SwtiRecordType* record)
 static void printArrayType(FldOutStream* fp, const SwtiArrayType* array)
 {
     fldOutStreamWrites(fp, "Array<");
-    swtiDebugOutput(fp, array->itemType);
+    swtiDebugOutput(fp, 0, array->itemType);
     fldOutStreamWrites(fp, ">");
 }
 
 static void printListType(FldOutStream* fp, const SwtiListType* list)
 {
     fldOutStreamWrites(fp, "List<");
-    swtiDebugOutput(fp, list->itemType);
+    swtiDebugOutput(fp, 0, list->itemType);
     fldOutStreamWrites(fp, ">");
 }
 
@@ -151,12 +155,17 @@ static void printBoolType(FldOutStream* fp, const SwtiBooleanType* fixed)
     fldOutStreamWrites(fp, "Bool");
 }
 
+static void printAnyType(FldOutStream* fp, const SwtiAnyType * fixed)
+{
+    fldOutStreamWrites(fp, "Any");
+}
+
 static void printBlobType(FldOutStream* fp, const SwtiBlobType* blob)
 {
     fldOutStreamWrites(fp, "Blob");
 }
 
-void swtiDebugOutput(FldOutStream* fp, const SwtiType* type)
+void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiType* type)
 {
     uintptr_t ptrValue = (uintptr_t)(void*) type;
     if (ptrValue < 256) {
@@ -171,7 +180,7 @@ void swtiDebugOutput(FldOutStream* fp, const SwtiType* type)
             printFunctionType(fp, (const SwtiFunctionType*) type);
             break;
         case SwtiTypeAlias:
-            printAliasType(fp, (const SwtiAliasType*) type);
+            printAliasType(fp, flags, (const SwtiAliasType*) type);
             break;
         case SwtiTypeRecord:
             printRecordType(fp, (const SwtiRecordType*) type);
@@ -191,6 +200,9 @@ void swtiDebugOutput(FldOutStream* fp, const SwtiType* type)
         case SwtiTypeBoolean:
             printBoolType(fp, (const SwtiBooleanType*) type);
             break;
+        case SwtiTypeAny:
+            printAnyType(fp, (const SwtiBooleanType*) type);
+            break;
         case SwtiTypeBlob:
             printBlobType(fp, (const SwtiBlobType*) type);
             break;
@@ -205,17 +217,17 @@ void swtiDebugOutput(FldOutStream* fp, const SwtiType* type)
             break;
 
         default:
-            CLOG_ERROR("unknown %d", type->type);
+            CLOG_ERROR("swtidebugoutput unknown %d", type->type);
     }
 }
 
-char* swtiDebugString(const SwtiType* type, char* buf, size_t maxBuf)
+char* swtiDebugString(const SwtiType* type, SwtiDebugOutputFlags flags, char* buf, size_t maxBuf)
 {
     FldOutStream outStream;
 
     fldOutStreamInit(&outStream, buf, maxBuf);
 
-    swtiDebugOutput(&outStream, type);
+    swtiDebugOutput(&outStream, flags, type);
 
     fldOutStreamWriteUInt8(&outStream, 0);
 

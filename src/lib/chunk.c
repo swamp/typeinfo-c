@@ -125,7 +125,7 @@ const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t inde
     return self->types[index];
 }
 
-void swtiChunkDebugOutput(const SwtiChunk* chunk, const char* debug)
+void swtiChunkDebugOutput(const SwtiChunk* chunk, int flags, const char* debug)
 {
 #define TEMP_BUFFER_SIZE (64 * 1024)
     uint8_t debugOut[TEMP_BUFFER_SIZE];
@@ -134,7 +134,7 @@ void swtiChunkDebugOutput(const SwtiChunk* chunk, const char* debug)
 
     fldOutStreamRewind(&stream);
     for (size_t i = 0; i < chunk->typeCount; i++) {
-        swtiDebugOutput(&stream, chunk->types[i]);
+        swtiDebugOutput(&stream, flags, chunk->types[i]);
         fldOutStreamWriteUInt8(&stream, '\n');
     }
     fldOutStreamWriteUInt8(&stream, 0);

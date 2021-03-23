@@ -11,6 +11,10 @@
 
 struct FldOutStream;
 
+typedef enum SwtiDebugOutputFlags {
+    SwtiDebugOutputFlagsExpandAlias = 1
+} SwtiDebugOutputFlags;
+
 // Must be the same as github.com/swamp/compiler/src/typeinfo/typeinfo_serialize.go
 typedef enum SwtiTypeValue {
     SwtiTypeCustom,
@@ -26,7 +30,8 @@ typedef enum SwtiTypeValue {
     SwtiTypeBlob,
     SwtiTypeResourceName,
     SwtiTypeChar,
-    SwtiTypeTuple
+    SwtiTypeTuple,
+    SwtiTypeAny
 } SwtiTypeValue;
 
 typedef struct SwtiType {
@@ -92,6 +97,9 @@ SWTI_TYPE_END(ListType)
 SWTI_TYPE_START(IntType)
 SWTI_TYPE_END(IntType)
 
+SWTI_TYPE_START(AnyType)
+SWTI_TYPE_END(AnyType)
+
 SWTI_TYPE_START(FixedType)
 SWTI_TYPE_END(FixedType)
 
@@ -133,8 +141,8 @@ void swtiInitCustomWithGenerics(SwtiCustomType* self, const char* name, const Sw
 
 void swtiInitArray(SwtiArrayType* self);
 void swtiInitList(SwtiListType* self);
-void swtiDebugOutput(struct FldOutStream* fp, const SwtiType* type);
-char* swtiDebugString(const SwtiType* type, char* buf, size_t maxCount);
+void swtiDebugOutput(struct FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiType* type);
+char* swtiDebugString(const SwtiType* type, SwtiDebugOutputFlags flags, char* buf, size_t maxCount);
 
 const SwtiType* swtiUnalias(const SwtiType* maybeAlias);
 const SwtiListType* swtiList(const SwtiType* maybeAlias);

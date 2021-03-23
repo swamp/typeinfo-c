@@ -26,6 +26,6 @@ const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t inde
 int swtiChunkCopy(const SwtiChunk* self, const struct SwtiType* type);
 int swtiChunkInitOnlyOneType(SwtiChunk* self, const struct SwtiType *rootType, int* index);
 
-void swtiChunkDebugOutput(const SwtiChunk* self, const char* debug);
+void swtiChunkDebugOutput(const SwtiChunk* self, int flags, const char* debug);
 
 #endif

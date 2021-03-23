@@ -342,6 +342,13 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             *outType = (const SwtiType*) tuple;
             break;
         }
+        case SwtiTypeAny: {
+            SwtiAnyType* bool = tc_malloc_type(SwtiAnyType);
+            swtiInitAny(bool);
+            *outType = (const SwtiType*) bool;
+            error = 0;
+            break;
+        }
         default:
             CLOG_ERROR("type information: readType unknown type:%d", typeValue);
             return -14;
