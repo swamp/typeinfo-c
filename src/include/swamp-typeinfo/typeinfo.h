@@ -127,6 +127,7 @@ void swtiInitString(SwtiStringType* self);
 void swtiInitResourceName(SwtiResourceNameType* self);
 void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
+void swtiInitAny(SwtiAnyType* self);
 void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitBlob(SwtiBlobType* self);
