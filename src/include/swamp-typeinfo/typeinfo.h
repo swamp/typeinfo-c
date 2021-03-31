@@ -31,7 +31,8 @@ typedef enum SwtiTypeValue {
     SwtiTypeResourceName,
     SwtiTypeChar,
     SwtiTypeTuple,
-    SwtiTypeAny
+    SwtiTypeAny,
+    SwtiTypeAnyMatchingTypes,
 } SwtiTypeValue;
 
 typedef struct SwtiType {
@@ -99,6 +100,9 @@ SWTI_TYPE_END(IntType)
 
 SWTI_TYPE_START(AnyType)
 SWTI_TYPE_END(AnyType)
+
+SWTI_TYPE_START(AnyMatchingTypesType)
+SWTI_TYPE_END(AnyMatchingTypesType)
 
 SWTI_TYPE_START(FixedType)
 SWTI_TYPE_END(FixedType)

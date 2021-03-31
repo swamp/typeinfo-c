@@ -41,6 +41,13 @@ void swtiInitAny(SwtiAnyType* self)
     self->internal.hash = 0x0000;
 }
 
+void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self)
+{
+    self->internal.type = SwtiTypeAnyMatchingTypes;
+    self->internal.name = "*";
+    self->internal.hash = 0x0000;
+}
+
 void swtiInitFixed(SwtiFixedType* self)
 {
     self->internal.type = SwtiTypeFixed;

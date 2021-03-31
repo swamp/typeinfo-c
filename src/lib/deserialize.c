@@ -343,9 +343,16 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             break;
         }
         case SwtiTypeAny: {
-            SwtiAnyType* bool = tc_malloc_type(SwtiAnyType);
-            swtiInitAny(bool);
-            *outType = (const SwtiType*) bool;
+            SwtiAnyType* any = tc_malloc_type(SwtiAnyType);
+            swtiInitAny(any);
+            *outType = (const SwtiType*) any;
+            error = 0;
+            break;
+        }
+        case SwtiTypeAnyMatchingTypes: {
+            SwtiAnyMatchingTypesType* anyMatchingTypes = tc_malloc_type(SwtiAnyMatchingTypesType);
+            swtiInitAnyMatchingTypes(anyMatchingTypes);
+            *outType = (const SwtiType*) anyMatchingTypes;
             error = 0;
             break;
         }

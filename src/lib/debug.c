@@ -150,14 +150,19 @@ static void printFixedType(FldOutStream* fp, const SwtiFixedType* fixed)
     fldOutStreamWrites(fp, "Fixed");
 }
 
-static void printBoolType(FldOutStream* fp, const SwtiBooleanType* fixed)
+static void printBoolType(FldOutStream* fp, const SwtiBooleanType* boolType)
 {
     fldOutStreamWrites(fp, "Bool");
 }
 
-static void printAnyType(FldOutStream* fp, const SwtiAnyType * fixed)
+static void printAnyType(FldOutStream* fp, const SwtiAnyType* any)
 {
     fldOutStreamWrites(fp, "Any");
+}
+
+static void printAnyMatchingTypesType(FldOutStream* fp, const SwtiAnyMatchingTypesType* anyMatching)
+{
+    fldOutStreamWrites(fp, "*");
 }
 
 static void printBlobType(FldOutStream* fp, const SwtiBlobType* blob)
@@ -201,7 +206,10 @@ void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTyp
             printBoolType(fp, (const SwtiBooleanType*) type);
             break;
         case SwtiTypeAny:
-            printAnyType(fp, (const SwtiBooleanType*) type);
+            printAnyType(fp, (const SwtiAnyType *) type);
+            break;
+        case SwtiTypeAnyMatchingTypes:
+            printAnyMatchingTypesType(fp, (const SwtiAnyMatchingTypesType *) type);
             break;
         case SwtiTypeBlob:
             printBlobType(fp, (const SwtiBlobType*) type);
