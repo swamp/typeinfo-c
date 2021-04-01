@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 #include <clog/clog.h>
+#include <swamp-typeinfo/add.h>
 #include <swamp-typeinfo/chunk.h>
-#include <swamp-typeinfo/consume.h>
 #include <swamp-typeinfo/typeinfo.h>
 
 static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** out);
@@ -68,7 +68,7 @@ static int addFunction(SwtiChunk* target, const SwtiFunctionType* source, const 
 static int addTuple(SwtiChunk* target, const SwtiTupleType* source, const SwtiTupleType** out)
 {
     SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
-    CLOG_VERBOSE("tuple count %d", source->parameterCount);
+    CLOG_VERBOSE("tuple count %zu", source->parameterCount);
     swtiInitTuple(tuple, 0, source->parameterCount);
     *out = tuple;
 
@@ -141,6 +141,18 @@ static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** o
     int error = -99;
 
     switch (source->type) {
+        case SwtiTypeAny: {
+            SwtiAnyType* any = tc_malloc_type(SwtiAnyType);
+            swtiInitAny(any);
+            *out = (const SwtiType*) any;
+            break;
+        }
+        case SwtiTypeAnyMatchingTypes: {
+            SwtiAnyMatchingTypesType* anyMatchingTypes = tc_malloc_type(SwtiAnyMatchingTypesType);
+            swtiInitAnyMatchingTypes(anyMatchingTypes);
+            *out = (const SwtiType*) anyMatchingTypes;
+            break;
+        }
         case SwtiTypeCustom: {
             error = addCustomType(target, (const SwtiCustomType*) source, (const SwtiCustomType**) out);
             break;
