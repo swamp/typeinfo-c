@@ -233,7 +233,7 @@ char* swtiDebugString(const SwtiType* type, SwtiDebugOutputFlags flags, char* bu
 {
     FldOutStream outStream;
 
-    fldOutStreamInit(&outStream, buf, maxBuf);
+    fldOutStreamInit(&outStream, (uint8_t *) buf, maxBuf);
 
     swtiDebugOutput(&outStream, flags, type);
 

@@ -6,7 +6,7 @@
 #include <flood/out_stream.h>
 #include <stdio.h>
 #include <swamp-typeinfo/chunk.h>
-#include <swamp-typeinfo/consume.h>
+#include <swamp-typeinfo/add.h>
 #include <swamp-typeinfo/deserialize.h>
 #include <swamp-typeinfo/deserialize_internal.h>
 #include <swamp-typeinfo/serialize.h>
@@ -71,9 +71,9 @@ void test()
     SwtiFunctionType fn;
     swtiInitFunction(&fn, params, sizeof(params) / sizeof(params[0]));
 
-    uint8_t debugOut[2048];
+    char debugOut[2048];
 
-    swtiDebugString((const SwtiType*) &fn, debugOut, 2048);
+    swtiDebugString((const SwtiType*) &fn, 0, debugOut, 2048);
     const char* hack1 = (const char*) debugOut;
 
     fprintf(stderr, "Constructed:\n%s\n", hack1);
@@ -134,10 +134,10 @@ void test()
 
     int error = swtiDeserialize(octets, sizeof(octets), &chunk);
     if (error < 0) {
-        CLOG_ERROR("problem with deserialization raw typeinformation %d");
+        CLOG_ERROR("problem with deserialization raw typeinformation %d", error);
     }
 
-    swtiChunkDebugOutput(&chunk, "after deserialization");
+    swtiChunkDebugOutput(&chunk, 0, "after deserialization");
 
 
     SwtiChunk copyChunk;
@@ -148,7 +148,7 @@ void test()
     }
 
     CLOG_INFO("newIndex %d", newIndex);
-    swtiChunkDebugOutput(&copyChunk, "after copy");
+    swtiChunkDebugOutput(&copyChunk, 0, "after copy");
 }
 
 
@@ -171,7 +171,7 @@ void file() {
         CLOG_ERROR("problem with deserialization raw typeinformation");
     }
     printf("before:-----------------\n");
-    swtiChunkDebugOutput(&chunk, "before");
+    swtiChunkDebugOutput(&chunk, 0, "before");
 
     uint8_t* outOctets = malloc(16 * 1024);
 
@@ -188,25 +188,25 @@ void file() {
 
     printf("WE GOT THIS BACK:-----------------\n");
 
-    swtiChunkDebugOutput(&deserializedChunk, "we got this back");
+    swtiChunkDebugOutput(&deserializedChunk, 0, "we got this back");
 
     SwtiChunk copyChunk;
     copyChunk.typeCount = 0;
     copyChunk.maxCount = 32;
-    copyChunk.types = tc_malloc_type_count(SwtiType*, chunk.maxCount);
+    copyChunk.types = tc_malloc_type_count(const SwtiType*, chunk.maxCount);
 
-    error = swtiTypeConsume(&copyChunk, deserializedChunk.types[17]);
+    error = swtiChunkAddType(&copyChunk, deserializedChunk.types[17]);
     if (error != 0) {
         CLOG_ERROR("problem with consume");
     }
-    error = swtiTypeConsume(&copyChunk, deserializedChunk.types[0]);
+    error = swtiChunkAddType(&copyChunk, deserializedChunk.types[0]);
     if (error != 0) {
         CLOG_ERROR("problem with consume");
     }
 
     printf("Copied:-----------------\n");
 
-    swtiChunkDebugOutput(&copyChunk, "copied");
+    swtiChunkDebugOutput(&copyChunk, 0, "copied");
 
 }
 

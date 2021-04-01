@@ -9,6 +9,9 @@
 
 struct SwtiType;
 
+/***
+ * Holds information for all the types for the package.
+ */
 typedef struct SwtiChunk {
     const struct SwtiType** types;
     size_t typeCount;

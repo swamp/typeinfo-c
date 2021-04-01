@@ -134,6 +134,7 @@ void swtiInitInt(SwtiIntType* self);
 void swtiInitAny(SwtiAnyType* self);
 void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
+void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self);
 void swtiInitBlob(SwtiBlobType* self);
 void swtiInitFunction(SwtiFunctionType* self, const SwtiType* types[], size_t typeCount);
 void swtiInitTuple(SwtiTupleType* self, const SwtiType* types[], size_t typeCount);

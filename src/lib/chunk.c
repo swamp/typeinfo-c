@@ -4,12 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 #include <clog/clog.h>
 #include <flood/out_stream.h>
+#include <swamp-typeinfo/add.h>
 #include <swamp-typeinfo/chunk.h>
-#include <swamp-typeinfo/deep_equal.h>
+#include <swamp-typeinfo/equal.h>
 #include <swamp-typeinfo/typeinfo.h>
-#include <swamp-typeinfo/consume.h>
 #include <tiny-libc/tiny_libc.h>
 
+/**
+ * Initializes the type information for a package. The @p types are copied.
+ * @param types An array of pointers to the types to be stored.
+ * @param typeCount The number of items in the \p types array.
+ */
 void swtiChunkInit(SwtiChunk* self, const SwtiType** types, size_t typeCount)
 {
     self->types = tc_malloc_type_count(const SwtiType*, typeCount);
@@ -34,16 +39,23 @@ void swtiDestroyType(SwtiType* type)
         case SwtiTypeResourceName:
         case SwtiTypeTuple:
         case SwtiTypeChar:
+        case SwtiTypeAny:
+        case SwtiTypeAnyMatchingTypes:
             break;
     }
     tc_free(type);
 }
 
+/***
+ * Destroys the chunk.
+ * @param self
+ */
 void swtiChunkDestroy(SwtiChunk* self)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {
         swtiDestroyType((SwtiType*) self->types[i]);
     }
+    tc_free(self->types);
     self->types = 0;
     self->typeCount = 0;
     self->maxCount = 0;
@@ -69,6 +81,13 @@ int swtiChunkFind(const SwtiChunk* self, const SwtiType* typeToSearchFor)
     return -1;
 }
 
+
+/***
+ * Finds a type given the name of the type.
+ * @param self
+ * @param typeToSearchFor the string to search for.
+ * @return the index for the found type, or -1 if not found.
+ */
 int swtiChunkFindFromName(const SwtiChunk* self, const char* typeToSearchFor)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {
@@ -92,7 +111,7 @@ int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
             continue;
         }
         if (typeToSearchFor->type == type->type) {
-            if (swtiTypeDeepEqual(typeToSearchFor, type) == 0) {
+            if (swtiTypeEqual(typeToSearchFor, type) == 0) {
                 return i;
             }
         }
@@ -108,7 +127,7 @@ int swtiChunkInitOnlyOneType(SwtiChunk* targetChunk, const SwtiType *rootType, i
     targetChunk->types = tc_malloc_type_count(const SwtiType*, targetChunk->maxCount);
 
     int rootTypeIndex;
-    if ((rootTypeIndex = swtiTypeConsume(targetChunk, rootType)) < 0) {
+    if ((rootTypeIndex = swtiChunkAddType(targetChunk, rootType)) < 0) {
         *index = rootTypeIndex;
         return rootTypeIndex;
     }
@@ -117,7 +136,14 @@ int swtiChunkInitOnlyOneType(SwtiChunk* targetChunk, const SwtiType *rootType, i
     return 0;
 }
 
-const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t index)
+
+/***
+ * Returns the type given the index into the internal types array.
+ * @param self
+ * @param index zero based index.
+ * @return the found type, or 0 if not found.
+ */
+const SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t index)
 {
     if (index >= self->typeCount) {
         return 0;
@@ -125,6 +151,12 @@ const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t inde
     return self->types[index];
 }
 
+/***
+ * Prints all the contained types to `stderr`. The formatting is subject to change, so only use it for debugging.
+ * @param chunk
+ * @param flags
+ * @param debug
+ */
 void swtiChunkDebugOutput(const SwtiChunk* chunk, int flags, const char* debug)
 {
 #define TEMP_BUFFER_SIZE (64 * 1024)
@@ -139,8 +171,8 @@ void swtiChunkDebugOutput(const SwtiChunk* chunk, int flags, const char* debug)
     }
     fldOutStreamWriteUInt8(&stream, 0);
 
-    const char* afterFixup = (const char*) debugOut;
+    const char* debugString = (const char*) debugOut;
 
     fprintf(stderr, "\n-----%s:\n", debug);
-    fputs(afterFixup, stderr);
+    fputs(debugString, stderr);
 }

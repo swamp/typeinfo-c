@@ -7,16 +7,16 @@
 #include <swamp-typeinfo/consume.h>
 #include <swamp-typeinfo/typeinfo.h>
 
-static int typeConsume(SwtiChunk* target, const SwtiType* original, const SwtiType** out);
+static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** out);
 
-static int typesConsume(SwtiChunk* target, const SwtiType** source, const SwtiType*** out, size_t count)
+static int addTypes(SwtiChunk* target, const SwtiType** source, const SwtiType*** out, size_t count)
 {
     int error;
     *out = 0;
     const SwtiType** targetArray = tc_malloc_type_count(const SwtiType*, count);
 
     for (size_t i = 0; i < count; ++i) {
-        if ((error = typeConsume(target, source[i], &targetArray[i])) < 0) {
+        if ((error = addType(target, source[i], &targetArray[i])) < 0) {
             return error;
         }
     }
@@ -26,15 +26,15 @@ static int typesConsume(SwtiChunk* target, const SwtiType** source, const SwtiTy
     return 0;
 }
 
-static int variantConsume(SwtiChunk* target, const SwtiCustomTypeVariant* source, SwtiCustomTypeVariant* out)
+static int addCustomTypeVariant(SwtiChunk* target, const SwtiCustomTypeVariant* source, SwtiCustomTypeVariant* out)
 {
     out->paramCount = source->paramCount;
     out->name = tc_str_dup(source->name);
 
-    return typesConsume(target, source->paramTypes, &out->paramTypes, source->paramCount);
+    return addTypes(target, source->paramTypes, &out->paramTypes, source->paramCount);
 }
 
-static int customConsume(SwtiChunk* target, const SwtiCustomType* source, const SwtiCustomType** out)
+static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const SwtiCustomType** out)
 {
     SwtiCustomType* custom = tc_malloc_type(SwtiCustomType);
     swtiInitCustom(custom, tc_str_dup(source->internal.name), 0, 0);
@@ -47,8 +47,8 @@ static int customConsume(SwtiChunk* target, const SwtiCustomType* source, const 
 
     int error;
     for (size_t i = 0; i < source->variantCount; ++i) {
-        if ((error = variantConsume(target, &source->variantTypes[i],
-                                    (SwtiCustomTypeVariant*) &custom->variantTypes[i])) != 0) {
+        if ((error = addCustomTypeVariant(target, &source->variantTypes[i],
+                                          (SwtiCustomTypeVariant*) &custom->variantTypes[i])) != 0) {
             return error;
         }
     }
@@ -56,40 +56,40 @@ static int customConsume(SwtiChunk* target, const SwtiCustomType* source, const 
     return 0;
 }
 
-static int functionConsume(SwtiChunk* target, const SwtiFunctionType* source, const SwtiFunctionType** out)
+static int addFunction(SwtiChunk* target, const SwtiFunctionType* source, const SwtiFunctionType** out)
 {
     SwtiFunctionType* fn = tc_malloc_type(SwtiFunctionType);
     swtiInitFunction(fn, source->parameterTypes, source->parameterCount);
     *out = fn;
 
-    return typesConsume(target, source->parameterTypes, &fn->parameterTypes, source->parameterCount);
+    return addTypes(target, source->parameterTypes, &fn->parameterTypes, source->parameterCount);
 }
 
-static int tupleConsume(SwtiChunk* target, const SwtiTupleType* source, const SwtiTupleType** out)
+static int addTuple(SwtiChunk* target, const SwtiTupleType* source, const SwtiTupleType** out)
 {
     SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
     CLOG_VERBOSE("tuple count %d", source->parameterCount);
     swtiInitTuple(tuple, 0, source->parameterCount);
     *out = tuple;
 
-    return typesConsume(target, source->parameterTypes, &tuple->parameterTypes, source->parameterCount);
+    return addTypes(target, source->parameterTypes, &tuple->parameterTypes, source->parameterCount);
 }
 
-static int aliasConsume(SwtiChunk* target, const SwtiAliasType* source, const SwtiAliasType** out)
+static int addAlias(SwtiChunk* target, const SwtiAliasType* source, const SwtiAliasType** out)
 {
     SwtiAliasType* alias = tc_malloc_type(SwtiAliasType);
     swtiInitAlias(alias, source->internal.name, 0);
     *out = alias;
-    return typeConsume(target, source->targetType, &alias->targetType);
+    return addType(target, source->targetType, &alias->targetType);
 }
 
-static int fieldConsume(SwtiChunk* target, const SwtiRecordTypeField* source, SwtiRecordTypeField* out)
+static int addField(SwtiChunk* target, const SwtiRecordTypeField* source, SwtiRecordTypeField* out)
 {
     out->name = tc_str_dup(source->name);
-    return typeConsume(target, source->fieldType, &out->fieldType);
+    return addType(target, source->fieldType, &out->fieldType);
 }
 
-static int recordConsume(SwtiChunk* target, const SwtiRecordType* source, const SwtiRecordType** out)
+static int addRecord(SwtiChunk* target, const SwtiRecordType* source, const SwtiRecordType** out)
 {
     SwtiRecordType* record = tc_malloc_type(SwtiRecordType);
     swtiInitRecord(record);
@@ -98,7 +98,7 @@ static int recordConsume(SwtiChunk* target, const SwtiRecordType* source, const 
 
     int error;
     for (size_t i = 0; i < source->fieldCount; ++i) {
-        if ((error = fieldConsume(target, &source->fields[i], (struct SwtiRecordTypeField*) &record->fields[i])) < 0) {
+        if ((error = addField(target, &source->fields[i], (struct SwtiRecordTypeField*) &record->fields[i])) < 0) {
             *out = 0;
             return error;
         }
@@ -108,25 +108,25 @@ static int recordConsume(SwtiChunk* target, const SwtiRecordType* source, const 
     return 0;
 }
 
-static int arrayConsume(SwtiChunk* target, const SwtiArrayType* source, const SwtiArrayType** out)
+static int addArray(SwtiChunk* target, const SwtiArrayType* source, const SwtiArrayType** out)
 {
     SwtiArrayType* array = tc_malloc_type(SwtiArrayType);
     swtiInitArray(array);
     *out = array;
 
-    return typeConsume(target, source->itemType, &array->itemType);
+    return addType(target, source->itemType, &array->itemType);
 }
 
-static int listConsume(SwtiChunk* target, const SwtiListType* source, const SwtiListType** out)
+static int addList(SwtiChunk* target, const SwtiListType* source, const SwtiListType** out)
 {
     SwtiListType* list = tc_malloc_type(SwtiListType);
     swtiInitList(list);
     *out = list;
 
-    return typeConsume(target, source->itemType, &list->itemType);
+    return addType(target, source->itemType, &list->itemType);
 }
 
-static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType** out)
+static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** out)
 {
     int foundIndex = swtiChunkFindDeep(target, source);
     if (foundIndex >= 0) {
@@ -142,31 +142,31 @@ static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType
 
     switch (source->type) {
         case SwtiTypeCustom: {
-            error = customConsume(target, (const SwtiCustomType*) source, (const SwtiCustomType**) out);
+            error = addCustomType(target, (const SwtiCustomType*) source, (const SwtiCustomType**) out);
             break;
         }
         case SwtiTypeFunction: {
-            error = functionConsume(target, (const SwtiFunctionType*) source, (const SwtiFunctionType**) out);
+            error = addFunction(target, (const SwtiFunctionType*) source, (const SwtiFunctionType**) out);
             break;
         }
         case SwtiTypeTuple: {
-            error = tupleConsume(target, (const SwtiTupleType*) source, (const SwtiTupleType**) out);
+            error = addTuple(target, (const SwtiTupleType*) source, (const SwtiTupleType**) out);
             break;
         }
         case SwtiTypeAlias: {
-            error = aliasConsume(target, (const SwtiAliasType*) source, (const SwtiAliasType**) out);
+            error = addAlias(target, (const SwtiAliasType*) source, (const SwtiAliasType**) out);
             break;
         }
         case SwtiTypeRecord: {
-            error = recordConsume(target, (const SwtiRecordType*) source, (const SwtiRecordType**) out);
+            error = addRecord(target, (const SwtiRecordType*) source, (const SwtiRecordType**) out);
             break;
         }
         case SwtiTypeArray: {
-            error = arrayConsume(target, (const SwtiArrayType*) source, (const SwtiArrayType**) out);
+            error = addArray(target, (const SwtiArrayType*) source, (const SwtiArrayType**) out);
             break;
         }
         case SwtiTypeList: {
-            error = listConsume(target, (const SwtiListType*) source, (const SwtiListType**) out);
+            error = addList(target, (const SwtiListType*) source, (const SwtiListType**) out);
             break;
         }
         case SwtiTypeString: {
@@ -221,7 +221,7 @@ static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType
     }
 
     if (error < 0) {
-        CLOG_ERROR("couldn't serialize type information");
+        CLOG_ERROR("addType: couldn't consume type information");
         return error;
     }
 
@@ -232,8 +232,8 @@ static int typeConsume(SwtiChunk* target, const SwtiType* source, const SwtiType
     return newIndex;
 }
 
-int swtiTypeConsume(SwtiChunk* target, const SwtiType* source)
+int swtiChunkAddType(SwtiChunk* target, const SwtiType* source)
 {
     const SwtiType* ignoreResult;
-    return typeConsume(target, source, &ignoreResult);
+    return addType(target, source, &ignoreResult);
 }

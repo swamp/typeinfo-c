@@ -6,15 +6,15 @@
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/typeinfo.h>
 
-static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b);
-static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b);
+static int typeEqual(const struct SwtiType* a, const struct SwtiType* b);
+//static int typeEqual(const struct SwtiType* a, const struct SwtiType* b);
 
-static int typesDeepEqual(const SwtiType** a, const SwtiType** b, size_t count)
+static int typesEqual(const SwtiType** a, const SwtiType** b, size_t count)
 {
     int error;
 
     for (size_t i = 0; i < count; ++i) {
-        if ((error = typeDeepEqual(a[i], b[i])) != 0) {
+        if ((error = typeEqual(a[i], b[i])) != 0) {
             return error;
         }
     }
@@ -22,7 +22,7 @@ static int typesDeepEqual(const SwtiType** a, const SwtiType** b, size_t count)
     return 0;
 }
 
-static int variantDeepEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVariant* b)
+static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVariant* b)
 {
     if (a->paramCount != b->paramCount) {
         return -1;
@@ -32,10 +32,10 @@ static int variantDeepEqual(const SwtiCustomTypeVariant* a, const SwtiCustomType
         return -2;
     }
 
-    return typesDeepEqual(a->paramTypes, b->paramTypes, a->paramCount);
+    return typesEqual(a->paramTypes, b->paramTypes, a->paramCount);
 }
 
-static int customDeepEqual(const SwtiCustomType* a, const SwtiCustomType* b)
+static int customEqual(const SwtiCustomType* a, const SwtiCustomType* b)
 {
     if (a->variantCount != b->variantCount) {
         return -1;
@@ -43,7 +43,7 @@ static int customDeepEqual(const SwtiCustomType* a, const SwtiCustomType* b)
 
     int error;
     for (size_t i = 0; i < a->variantCount; ++i) {
-        if ((error = variantDeepEqual(&a->variantTypes[i], &b->variantTypes[i])) != 0) {
+        if ((error = variantEqual(&a->variantTypes[i], &b->variantTypes[i])) != 0) {
             return error;
         }
     }
@@ -51,43 +51,43 @@ static int customDeepEqual(const SwtiCustomType* a, const SwtiCustomType* b)
     return 0;
 }
 
-static int functionDeepEqual(const SwtiFunctionType* a, const SwtiFunctionType* b)
+static int functionEqual(const SwtiFunctionType* a, const SwtiFunctionType* b)
 {
     if (a->parameterCount != b->parameterCount) {
         return -1;
     }
 
-    return typesDeepEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
+    return typesEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
 }
 
-static int tupleDeepEqual(const SwtiTupleType* a, const SwtiTupleType* b)
+static int tupleEqual(const SwtiTupleType* a, const SwtiTupleType* b)
 {
     if (a->parameterCount != b->parameterCount) {
         return -1;
     }
 
-    return typesDeepEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
+    return typesEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
 }
 
-static int aliasDeepEqual(const SwtiAliasType* a, const SwtiAliasType* b)
+static int aliasEqual(const SwtiAliasType* a, const SwtiAliasType* b)
 {
     if (!tc_str_equal(a->internal.name, b->internal.name)) {
         return -1;
     }
 
-    return typeDeepEqual(a->targetType, b->targetType);
+    return typeEqual(a->targetType, b->targetType);
 }
 
-static int fieldDeepEqual(const SwtiRecordTypeField* a, const SwtiRecordTypeField* b)
+static int fieldEqual(const SwtiRecordTypeField* a, const SwtiRecordTypeField* b)
 {
     if (!tc_str_equal(a->name, b->name)) {
         return -2;
     }
 
-    return typeDeepEqual(a->fieldType, b->fieldType);
+    return typeEqual(a->fieldType, b->fieldType);
 }
 
-static int recordDeepEqual(const SwtiRecordType* a, const SwtiRecordType* b)
+static int recordEqual(const SwtiRecordType* a, const SwtiRecordType* b)
 {
     if (a->fieldCount != b->fieldCount) {
         return -1;
@@ -95,7 +95,7 @@ static int recordDeepEqual(const SwtiRecordType* a, const SwtiRecordType* b)
 
     int error;
     for (size_t i = 0; i < a->fieldCount; ++i) {
-        if ((error = fieldDeepEqual(&a->fields[i], &b->fields[i])) != 0) {
+        if ((error = fieldEqual(&a->fields[i], &b->fields[i])) != 0) {
             return error;
         }
     }
@@ -103,17 +103,17 @@ static int recordDeepEqual(const SwtiRecordType* a, const SwtiRecordType* b)
     return 0;
 }
 
-static int arrayDeepEqual(const SwtiArrayType* a, const SwtiArrayType* b)
+static int arrayEqual(const SwtiArrayType* a, const SwtiArrayType* b)
 {
-    return typeDeepEqual(a->itemType, b->itemType);
+    return typeEqual(a->itemType, b->itemType);
 }
 
-static int listDeepEqual(const SwtiListType* a, const SwtiListType* b)
+static int listEqual(const SwtiListType* a, const SwtiListType* b)
 {
-    return typeDeepEqual(a->itemType, b->itemType);
+    return typeEqual(a->itemType, b->itemType);
 }
 
-static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
+static int typeEqual(const struct SwtiType* a, const struct SwtiType* b)
 {
     if (a->type != b->type) {
         return -4;
@@ -123,31 +123,31 @@ static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
 
     switch (a->type) {
         case SwtiTypeCustom: {
-            error = customDeepEqual((const SwtiCustomType*) a, (const SwtiCustomType*) b);
+            error = customEqual((const SwtiCustomType*) a, (const SwtiCustomType*) b);
             break;
         }
         case SwtiTypeFunction: {
-            error = functionDeepEqual((const SwtiFunctionType*) a, (const SwtiFunctionType*) b);
+            error = functionEqual((const SwtiFunctionType*) a, (const SwtiFunctionType*) b);
             break;
         }
         case SwtiTypeTuple: {
-            error = tupleDeepEqual((const SwtiTupleType *) a, (const SwtiTupleType*) b);
+            error = tupleEqual((const SwtiTupleType*) a, (const SwtiTupleType*) b);
             break;
         }
         case SwtiTypeAlias: {
-            error = aliasDeepEqual((const SwtiAliasType*) a, (const SwtiAliasType*) b);
+            error = aliasEqual((const SwtiAliasType*) a, (const SwtiAliasType*) b);
             break;
         }
         case SwtiTypeRecord: {
-            error = recordDeepEqual((const SwtiRecordType*) a, (const SwtiRecordType*) b);
+            error = recordEqual((const SwtiRecordType*) a, (const SwtiRecordType*) b);
             break;
         }
         case SwtiTypeArray: {
-            error = arrayDeepEqual((const SwtiArrayType*) a, (const SwtiArrayType*) b);
+            error = arrayEqual((const SwtiArrayType*) a, (const SwtiArrayType*) b);
             break;
         }
         case SwtiTypeList: {
-            error = listDeepEqual((const SwtiListType*) a, (const SwtiListType*) b);
+            error = listEqual((const SwtiListType*) a, (const SwtiListType*) b);
             break;
         }
         case SwtiTypeString: {
@@ -178,12 +178,20 @@ static int typeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
             error = 0;
             break;
         }
+        default:
+            CLOG_ERROR("typeEqual: need information about type %d", a->type);
     }
 
     return error;
 }
 
-int swtiTypeDeepEqual(const struct SwtiType* a, const struct SwtiType* b)
+/***
+ * Checks if two types are equal
+ * @param a
+ * @param b
+ * @return 0 if equal or negative if the types are not equal.
+ */
+int swtiTypeEqual(const struct SwtiType* a, const struct SwtiType* b)
 {
-    return typeDeepEqual(a, b);
+    return typeEqual(a, b);
 }

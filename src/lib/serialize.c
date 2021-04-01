@@ -242,6 +242,14 @@ static int writeType(FldOutStream* stream, const SwtiType* type)
             error = 0;
             break;
         }
+        case SwtiTypeAny: {
+            error = 0;
+            break;
+        }
+        case SwtiTypeAnyMatchingTypes: {
+            error = 0;
+            break;
+        }
         case SwtiTypeTuple: {
             error = writeTuple(stream, (const SwtiTupleType*) type);
             break;
