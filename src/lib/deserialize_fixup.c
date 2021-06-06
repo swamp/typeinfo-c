@@ -11,7 +11,7 @@
 int fixupTypeRef(const SwtiType** type, const SwtiChunk* chunk)
 {
     uintptr_t ptrValue = (uintptr_t)(*type);
-    if (ptrValue >= 256) {
+    if (ptrValue >= 65535) {
         CLOG_ERROR("illegal ref");
         *type = 0;
         return -2;

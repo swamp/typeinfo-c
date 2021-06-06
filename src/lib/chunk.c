@@ -165,7 +165,10 @@ void swtiChunkDebugOutput(const SwtiChunk* chunk, int flags, const char* debug)
     fldOutStreamInit(&stream, debugOut, TEMP_BUFFER_SIZE);
 
     fldOutStreamRewind(&stream);
+
+    fldOutStreamWritef(&stream,"typeInformation: typeCount: %d\n", chunk->typeCount);
     for (size_t i = 0; i < chunk->typeCount; i++) {
+        fldOutStreamWritef(&stream,"%d: ", i);
         swtiDebugOutput(&stream, flags, chunk->types[i]);
         fldOutStreamWriteUInt8(&stream, '\n');
     }

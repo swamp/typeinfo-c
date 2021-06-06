@@ -29,9 +29,9 @@ static int readString(FldInStream* stream, const char** outString)
 
 static int readTypeRef(FldInStream* stream, SwtiType** type)
 {
-    uint8_t index;
+    uint16_t index;
     int error;
-    if ((error = fldInStreamReadUInt8(stream, &index)) != 0) {
+    if ((error = fldInStreamReadUInt16(stream, &index)) != 0) {
         return error;
     }
 
@@ -383,14 +383,14 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
         return error;
     }
 
-    int correct = (major == 0) && (minor == 1) && (patch == 4);
+    int correct = (major == 0) && (minor == 1) && (patch == 5);
     if (!correct) {
         CLOG_SOFT_ERROR("got wrong version. Expected 0.1.4 and got %d.%d.%d", major, minor, patch)
         return -2;
     }
 
-    uint8_t typesThatFollowCount;
-    if ((error = fldInStreamReadUInt8(stream, &typesThatFollowCount)) != 0) {
+    uint16_t typesThatFollowCount;
+    if ((error = fldInStreamReadUInt16(stream, &typesThatFollowCount)) != 0) {
         return error;
     }
 
@@ -399,11 +399,11 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
     tc_mem_clear_type_n(array, typesThatFollowCount);
     target->typeCount = typesThatFollowCount;
 
-    for (uint8_t i = 0; i < typesThatFollowCount; i++) {
+    for (uint16_t i = 0; i < typesThatFollowCount; i++) {
         target->types[i] = 0;
     }
 
-    for (uint8_t i = 0; i < typesThatFollowCount; i++) {
+    for (uint16_t i = 0; i < typesThatFollowCount; i++) {
         if ((error = readType(stream, &target->types[i])) != 0) {
             return error;
         }
