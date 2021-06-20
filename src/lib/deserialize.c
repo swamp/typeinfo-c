@@ -355,6 +355,13 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             error = 0;
             break;
         }
+        case SwtiTypeUnmanaged: {
+            SwtiAnyType* any = tc_malloc_type(SwtiUnmanagedType);
+            swtiInitUnmanaged(any);
+            *outType = (const SwtiType*) any;
+            error = 0;
+            break;
+        }
         default:
             CLOG_ERROR("type information: readType unknown type:%d", typeValue);
             return -14;

@@ -110,6 +110,7 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
         case SwtiTypeInt:
         case SwtiTypeAny:
         case SwtiTypeAnyMatchingTypes:
+        case SwtiTypeUnmanaged:
         case SwtiTypeString:
         case SwtiTypeChar:
         case SwtiTypeResourceName:

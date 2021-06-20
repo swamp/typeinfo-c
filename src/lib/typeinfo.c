@@ -41,6 +41,13 @@ void swtiInitAny(SwtiAnyType* self)
     self->internal.hash = 0x0000;
 }
 
+void swtiInitUnmanaged(SwtiUnmanagedType* self)
+{
+    self->internal.type = SwtiTypeUnmanaged;
+    self->internal.name = "Unmanaged";
+    self->internal.hash = 0x0000;
+}
+
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self)
 {
     self->internal.type = SwtiTypeAnyMatchingTypes;

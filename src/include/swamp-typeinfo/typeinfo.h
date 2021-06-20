@@ -33,6 +33,7 @@ typedef enum SwtiTypeValue {
     SwtiTypeTuple,
     SwtiTypeAny,
     SwtiTypeAnyMatchingTypes,
+    SwtiTypeUnmanaged
 } SwtiTypeValue;
 
 typedef struct SwtiType {
@@ -101,6 +102,9 @@ SWTI_TYPE_END(IntType)
 SWTI_TYPE_START(AnyType)
 SWTI_TYPE_END(AnyType)
 
+SWTI_TYPE_START(UnmanagedType)
+SWTI_TYPE_END(UnmanagedType)
+
 SWTI_TYPE_START(AnyMatchingTypesType)
 SWTI_TYPE_END(AnyMatchingTypesType)
 
@@ -132,6 +136,7 @@ void swtiInitResourceName(SwtiResourceNameType* self);
 void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
 void swtiInitAny(SwtiAnyType* self);
+void swtiInitUnmanaged(SwtiUnmanagedType* self);
 void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self);
