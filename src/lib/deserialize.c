@@ -73,7 +73,6 @@ static int readVariant(FldInStream* stream, SwtiCustomTypeVariant* variant)
     variant->name = name;
 
     return readTypeRefs(stream, &variant->paramTypes, &variant->paramCount);
-    ;
 }
 
 static int readVariants(FldInStream* stream, SwtiCustomType* custom, uint8_t count)
