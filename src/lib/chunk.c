@@ -65,9 +65,6 @@ int swtiChunkFind(const SwtiChunk* self, const SwtiType* typeToSearchFor)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {
         const struct SwtiType* type = self->types[i];
-        if (type == 0) {
-            continue;
-        }
         if (typeToSearchFor->hash == type->hash) {
             if (typeToSearchFor->type != type->type) {
                 CLOG_SOFT_ERROR("something is wrong here. Hash collide %zu %s vs %s", i, typeToSearchFor->name,
@@ -92,9 +89,6 @@ int swtiChunkFindFromName(const SwtiChunk* self, const char* typeToSearchFor)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {
         const struct SwtiType* type = self->types[i];
-        if (type == 0) {
-            continue;
-        }
         if (tc_str_equal(type->name, typeToSearchFor)) {
             return i;
         }
@@ -107,9 +101,6 @@ int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {
         const struct SwtiType* type = self->types[i];
-        if (type == 0) {
-            continue;
-        }
         if (typeToSearchFor->type == type->type) {
             if (swtiTypeEqual(typeToSearchFor, type) == 0) {
                 return i;
