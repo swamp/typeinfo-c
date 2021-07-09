@@ -97,6 +97,23 @@ int swtiChunkFindFromName(const SwtiChunk* self, const char* typeToSearchFor)
     return -1;
 }
 
+/***
+ * Gets a type given the name of the type.
+ * @param self
+ * @param typeToSearchFor the string to search for.
+ * @return the found type or error if not found.
+ */
+const SwtiType* swtiChunkGetFromName(const SwtiChunk* self, const char* typeToSearchFor)
+{
+    int index = swtiChunkFindFromName(self, typeToSearchFor);
+    if (index < 0) {
+        CLOG_ERROR("couldn't find type '%s'", typeToSearchFor);
+        return 0;
+    }
+
+    return swtiChunkTypeFromIndex(self, index);
+}
+
 int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
 {
     for (size_t i = 0; i < self->typeCount; ++i) {
