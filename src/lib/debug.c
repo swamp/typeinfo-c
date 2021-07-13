@@ -135,9 +135,14 @@ static void printStringType(FldOutStream* fp, const SwtiStringType* string)
     fldOutStreamWrites(fp, "String");
 }
 
-static void printCharType(FldOutStream* fp, const SwtiCharType * ch)
+static void printCharType(FldOutStream* fp, const SwtiCharType* ch)
 {
     fldOutStreamWrites(fp, "Char");
+}
+
+static void printUnmanagedType(FldOutStream* fp, const SwtiUnmanagedType* unmanaged)
+{
+    fldOutStreamWrites(fp, "*Unmanaged*");
 }
 
 static void printIntType(FldOutStream* fp, const SwtiIntType* intType)
@@ -223,7 +228,9 @@ void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTyp
         case SwtiTypeChar:
             printCharType(fp, (const SwtiCharType*) type);
             break;
-
+        case SwtiTypeUnmanaged:
+            printUnmanagedType(fp, (const SwtiUnmanagedType*) type);
+            break;
         default:
             CLOG_ERROR("swtidebugoutput unknown %d", type->type);
     }
@@ -245,7 +252,7 @@ char* swtiDebugString(const SwtiType* type, SwtiDebugOutputFlags flags, char* bu
 const SwtiType* swtiUnalias(const SwtiType* maybeAlias)
 {
     if (maybeAlias->type == SwtiTypeAlias) {
-        return ((const SwtiAliasType*) maybeAlias)->targetType;
+        return swtiUnalias(((const SwtiAliasType*) maybeAlias)->targetType);
     }
 
     return maybeAlias;
