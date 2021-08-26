@@ -238,6 +238,21 @@ static int readAlias(FldInStream* stream, SwtiAliasType** outAlias)
     return 0;
 }
 
+static readUnmanagedType(FldInStream* stream, SwtiUnmanagedType* unmanagedType)
+{
+    int error;
+
+    if ((error = readString(stream, &unmanagedType->internal.name)) != 0) {
+        return error;
+    }
+    
+    if ((error = fldInStreamReadUInt16(stream, &unmanagedType->userTypeId)) != 0) {
+        return error;
+    }
+
+    return 0;
+}
+
 static int readType(FldInStream* stream, const SwtiType** outType)
 {
     uint8_t typeValueRaw;
@@ -356,9 +371,13 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             break;
         }
         case SwtiTypeUnmanaged: {
-            SwtiAnyType* any = tc_malloc_type(SwtiUnmanagedType);
-            swtiInitUnmanaged(any);
-            *outType = (const SwtiType*) any;
+            SwtiUnmanagedType* unmanaged = tc_malloc_type(SwtiUnmanagedType);
+            unmanaged->internal.index = 0;
+            unmanaged->internal.hash = 0;
+            unmanaged->userTypeId = 0;
+            swtiInitUnmanaged(unmanaged, 0);
+            readUnmanagedType(stream, unmanaged);
+            *outType = (const SwtiUnmanagedType*) unmanaged;
             error = 0;
             break;
         }
@@ -389,9 +408,9 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
         return error;
     }
 
-    int correct = (major == 0) && (minor == 1) && (patch == 5);
+    int correct = (major == 0) && (minor == 1) && (patch == 6);
     if (!correct) {
-        CLOG_SOFT_ERROR("got wrong version. Expected 0.1.4 and got %d.%d.%d", major, minor, patch)
+        CLOG_SOFT_ERROR("got wrong version. Expected 0.1.5 and got %d.%d.%d", major, minor, patch)
         return -2;
     }
 

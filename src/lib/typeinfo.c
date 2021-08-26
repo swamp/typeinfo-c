@@ -41,11 +41,12 @@ void swtiInitAny(SwtiAnyType* self)
     self->internal.hash = 0x0000;
 }
 
-void swtiInitUnmanaged(SwtiUnmanagedType* self)
+void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name)
 {
     self->internal.type = SwtiTypeUnmanaged;
     self->internal.name = "Unmanaged";
     self->internal.hash = 0x0000;
+    self->userTypeId = userTypeId;
 }
 
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self)

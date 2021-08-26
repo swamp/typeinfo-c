@@ -103,6 +103,7 @@ SWTI_TYPE_START(AnyType)
 SWTI_TYPE_END(AnyType)
 
 SWTI_TYPE_START(UnmanagedType)
+uint16_t userTypeId;
 SWTI_TYPE_END(UnmanagedType)
 
 SWTI_TYPE_START(AnyMatchingTypesType)
@@ -136,7 +137,7 @@ void swtiInitResourceName(SwtiResourceNameType* self);
 void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
 void swtiInitAny(SwtiAnyType* self);
-void swtiInitUnmanaged(SwtiUnmanagedType* self);
+void swtiInitUnmanaged(SwtiUnmanagedType* self, const char* name);
 void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self);

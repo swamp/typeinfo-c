@@ -7,6 +7,8 @@
 #include <swamp-typeinfo/serialize.h>
 #include <swamp-typeinfo/typeinfo.h>
 #include <tiny-libc/tiny_libc.h>
+#include <clog/clog.h>
+#include <swamp-typeinfo/fnv.h>
 
 static int writeString(FldOutStream* stream, const char* outString)
 {
@@ -181,6 +183,20 @@ static int writeAlias(FldOutStream* stream, const SwtiAliasType* alias)
     return 0;
 }
 
+static int writeUnmanaged(FldOutStream* stream, const SwtiUnmanagedType* unmanaged)
+{
+    int error;
+    if ((error = writeString(stream, unmanaged->internal.name)) != 0) {
+        return error;
+    }
+
+    if ((error = fldOutStreamWriteUInt16(stream, unmanaged->userTypeId)) != 0) {
+        return error;
+    }
+
+    return 0;
+}
+
 static int writeType(FldOutStream* stream, const SwtiType* type)
 {
     int error;
@@ -214,6 +230,14 @@ static int writeType(FldOutStream* stream, const SwtiType* type)
             error = writeList(stream, (const SwtiListType*) type);
             break;
         }
+        case SwtiTypeUnmanaged: {
+            error = writeUnmanaged(stream, (const SwtiUnmanagedType*) type);
+            break;
+        }
+        case SwtiTypeTuple: {
+            error = writeTuple(stream, (const SwtiTupleType*) type);
+            break;
+        }        
         case SwtiTypeString: {
             error = 0;
             break;
@@ -250,9 +274,8 @@ static int writeType(FldOutStream* stream, const SwtiType* type)
             error = 0;
             break;
         }
-        case SwtiTypeTuple: {
-            error = writeTuple(stream, (const SwtiTupleType*) type);
-            break;
+        default: {
+            CLOG_ERROR("Unknown type %d", type->type);
         }
     }
 
