@@ -377,7 +377,7 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             unmanaged->userTypeId = 0;
             swtiInitUnmanaged(unmanaged, 0);
             readUnmanagedType(stream, unmanaged);
-            *outType = (const SwtiUnmanagedType*) unmanaged;
+            *outType = (const SwtiType*) unmanaged;
             error = 0;
             break;
         }
