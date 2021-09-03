@@ -263,8 +263,6 @@ static int readType(FldInStream* stream, const SwtiType** outType)
         return error;
     }
 
-    CLOG_DEBUG("readType %d", typeValueRaw);
-
     error = -99;
     SwtiTypeValue typeValue = (SwtiTypeValue) typeValueRaw;
     switch (typeValue) {
