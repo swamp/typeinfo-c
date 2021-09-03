@@ -9,6 +9,7 @@
 #include <tiny-libc/tiny_libc.h>
 #include <clog/clog.h>
 #include <swamp-typeinfo/fnv.h>
+#include <swamp-typeinfo/version.h>
 
 static int writeString(FldOutStream* stream, const char* outString)
 {
@@ -29,7 +30,7 @@ static int writeTypeRef(FldOutStream* stream, const SwtiType* type)
 {
     uint8_t index = type->index;
     int error;
-    if ((error = fldOutStreamWriteUInt8(stream, index)) != 0) {
+    if ((error = fldOutStreamWriteUInt16(stream, index)) != 0) {
         return error;
     }
 
@@ -295,17 +296,17 @@ int swtiSerializeToStream(FldOutStream* stream, const struct SwtiChunk* source)
 
     int tell = stream->pos;
 
-    if ((error = fldOutStreamWriteUInt8(stream, major)) != 0) {
+    if ((error = fldOutStreamWriteUInt8(stream, SWTI_VERSION_MAJOR)) != 0) {
         return error;
     }
-    if ((error = fldOutStreamWriteUInt8(stream, minor)) != 0) {
+    if ((error = fldOutStreamWriteUInt8(stream, SWTI_VERSION_MINOR)) != 0) {
         return error;
     }
-    if ((error = fldOutStreamWriteUInt8(stream, patch)) != 0) {
+    if ((error = fldOutStreamWriteUInt8(stream, SWTI_VERSION_PATCH)) != 0) {
         return error;
     }
 
-    if ((error = fldOutStreamWriteUInt8(stream, source->typeCount)) != 0) {
+    if ((error = fldOutStreamWriteUInt16(stream, source->typeCount)) != 0) {
         return error;
     }
 

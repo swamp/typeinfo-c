@@ -9,6 +9,7 @@
 #include <swamp-typeinfo/deserialize_internal.h>
 #include <swamp-typeinfo/typeinfo.h>
 #include <tiny-libc/tiny_libc.h>
+#include <swamp-typeinfo/version.h>
 
 static int readString(FldInStream* stream, const char** outString)
 {
@@ -262,6 +263,8 @@ static int readType(FldInStream* stream, const SwtiType** outType)
         return error;
     }
 
+    CLOG_DEBUG("readType %d", typeValueRaw);
+
     error = -99;
     SwtiTypeValue typeValue = (SwtiTypeValue) typeValueRaw;
     switch (typeValue) {
@@ -375,7 +378,7 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             unmanaged->internal.index = 0;
             unmanaged->internal.hash = 0;
             unmanaged->userTypeId = 0;
-            swtiInitUnmanaged(unmanaged, 0);
+            swtiInitUnmanaged(unmanaged, 0, 0);
             readUnmanagedType(stream, unmanaged);
             *outType = (const SwtiType*) unmanaged;
             error = 0;
@@ -408,9 +411,9 @@ static int deserializeRawFromStream(FldInStream* stream, SwtiChunk* target)
         return error;
     }
 
-    int correct = (major == 0) && (minor == 1) && (patch == 6);
+    int correct = (major == SWTI_VERSION_MAJOR) && (minor == SWTI_VERSION_MINOR) && (patch == SWTI_VERSION_PATCH);
     if (!correct) {
-        CLOG_SOFT_ERROR("got wrong version. Expected 0.1.5 and got %d.%d.%d", major, minor, patch)
+        CLOG_SOFT_ERROR("got wrong version. Expected %d.%d.%d and got %d.%d.%d", SWTI_VERSION_MAJOR, SWTI_VERSION_MINOR, SWTI_VERSION_PATCH, major, minor, patch)
         return -2;
     }
 

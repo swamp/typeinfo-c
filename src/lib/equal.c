@@ -113,6 +113,18 @@ static int listEqual(const SwtiListType* a, const SwtiListType* b)
     return typeEqual(a->itemType, b->itemType);
 }
 
+static int unmanagedEqual(const SwtiUnmanagedType* a, const SwtiUnmanagedType* b)
+{
+    if (a->userTypeId != b->userTypeId) {
+        return -2;
+    }
+    if (!tc_str_equal(a->internal.name, b->internal.name)) {
+        return -1;
+    }
+
+    return 0;
+}
+
 static int typeEqual(const struct SwtiType* a, const struct SwtiType* b)
 {
     if (a->type != b->type) {
@@ -150,6 +162,9 @@ static int typeEqual(const struct SwtiType* a, const struct SwtiType* b)
             error = listEqual((const SwtiListType*) a, (const SwtiListType*) b);
             break;
         }
+        case SwtiTypeUnmanaged: {
+            error = unmanagedEqual((const SwtiUnmanagedType*) a, (const SwtiUnmanagedType*) b);
+        } break;
         case SwtiTypeString: {
             error = 0;
             break;

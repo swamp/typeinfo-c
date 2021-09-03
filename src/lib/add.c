@@ -56,6 +56,16 @@ static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const 
     return 0;
 }
 
+static int addUnmanaged(SwtiChunk* target, const SwtiUnmanagedType* source, const SwtiUnmanagedType** out)
+{
+    SwtiUnmanagedType* unmanagedType = tc_malloc_type(SwtiUnmanagedType);
+    swtiInitUnmanaged(unmanagedType, source->userTypeId, source->internal.name);
+
+    *out = unmanagedType;
+
+    return 0;
+}
+
 static int addFunction(SwtiChunk* target, const SwtiFunctionType* source, const SwtiFunctionType** out)
 {
     SwtiFunctionType* fn = tc_malloc_type(SwtiFunctionType);
@@ -181,6 +191,10 @@ static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** o
             error = addList(target, (const SwtiListType*) source, (const SwtiListType**) out);
             break;
         }
+        case SwtiTypeUnmanaged: {
+            error = addUnmanaged(target, (const SwtiListType*) source, (const SwtiListType**) out);
+            break;
+        }
         case SwtiTypeString: {
             SwtiStringType* str = tc_malloc_type(SwtiStringType);
             swtiInitString(str);
@@ -230,6 +244,7 @@ static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** o
             error = 0;
             break;
         }
+
     }
 
     if (error < 0) {

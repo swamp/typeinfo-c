@@ -44,7 +44,11 @@ void swtiInitAny(SwtiAnyType* self)
 void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name)
 {
     self->internal.type = SwtiTypeUnmanaged;
-    self->internal.name = "Unmanaged";
+    if (name != 0) {
+        self->internal.name = tc_strdup(name);
+    } else {
+        self->internal.name = 0;
+    }
     self->internal.hash = 0x0000;
     self->userTypeId = userTypeId;
 }
