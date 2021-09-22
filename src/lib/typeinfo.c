@@ -111,10 +111,11 @@ void swtiInitTuple(SwtiTupleType* self, const SwtiType** types, size_t typeCount
     self->internal.type = SwtiTypeTuple;
     self->internal.name = "Tuple";
     self->internal.hash = 0x0000;
-    self->parameterCount = typeCount;
-    self->parameterTypes = calloc(typeCount, sizeof(SwtiType*));
+    self->fieldCount = typeCount;
+    self->fields = calloc(typeCount, sizeof(SwtiTupleTypeField *));
+    self->types = calloc(typeCount, sizeof(SwtiType *));
     if (types != 0) {
-        tc_memcpy_octets(self->parameterTypes, types, sizeof(SwtiType*) * typeCount);
+        tc_memcpy_octets(self->types, types, sizeof(SwtiType*) * typeCount);
     }
 }
 

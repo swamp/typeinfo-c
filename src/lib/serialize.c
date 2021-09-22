@@ -54,11 +54,26 @@ static int writeTypeRefs(FldOutStream* stream, const SwtiType** types, size_t co
     return 0;
 }
 
+static int writeMemoryOffset(FldOutStream* stream, uint16_t offset)
+{
+    int error;
+    if ((error = fldOutStreamWriteUInt16(stream, offset)) != 0) {
+        return error;
+    }
+
+    return 0;
+}
+
 static int writeVariant(FldOutStream* stream, const SwtiCustomTypeVariant* variant)
 {
     writeString(stream, variant->name);
 
-    return writeTypeRefs(stream, variant->paramTypes, variant->paramCount);
+    for (size_t i=0; i<variant->paramCount; ++i) {
+        writeTypeRef(stream, variant->fields[i].fieldType);
+        writeMemoryOffset(stream, variant->fields[i].memoryOffset);
+    }
+
+    return 0;
 }
 
 static int writeVariants(FldOutStream* stream, const SwtiCustomType* custom)
@@ -163,7 +178,7 @@ static int writeFunction(FldOutStream* stream, const SwtiFunctionType* fn)
 static int writeTuple(FldOutStream* stream, const SwtiTupleType* tuple)
 {
     int error;
-    if ((error = writeTypeRefs(stream, tuple->parameterTypes, tuple->parameterCount)) != 0) {
+    if ((error = writeTypeRefs(stream, tuple->fields, tuple->fieldCount)) != 0) {
         return error;
     }
 

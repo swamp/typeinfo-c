@@ -64,8 +64,11 @@ static int fixupCustomType(SwtiCustomType* custom, const struct SwtiChunk* chunk
 
     for (size_t i = 0; i < custom->variantCount; ++i) {
         SwtiCustomTypeVariant* mutableVariant = (SwtiCustomTypeVariant*) &custom->variantTypes[i];
-        if ((error = fixupTypeRefs(mutableVariant->paramTypes, mutableVariant->paramCount, chunk)) != 0) {
-            return error;
+        for (size_t variantParamIndex = 0; variantParamIndex < mutableVariant->paramCount; ++variantParamIndex) {
+            SwtiCustomTypeVariantField* mutableVariantField = (SwtiCustomTypeVariantField*) &mutableVariant->fields[variantParamIndex];
+            if ((error = fixupTypeRef(&mutableVariantField->fieldType, chunk)) != 0) {
+                return error;
+            }
         }
     }
 
@@ -85,7 +88,7 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
         }
         case SwtiTypeTuple: {
             SwtiTupleType* tuple = (SwtiTupleType*) type;
-            return fixupTypeRefs((const SwtiType**) tuple->parameterTypes, tuple->parameterCount, chunk);
+            return fixupTypeRefs((const SwtiType**) tuple->types, tuple->fieldCount, chunk);
         }
         case SwtiTypeAlias: {
             SwtiAliasType* alias = (SwtiAliasType*) type;

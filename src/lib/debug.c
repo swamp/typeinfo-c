@@ -35,7 +35,7 @@ static void printCustomTypeVariant(FldOutStream* fp, const SwtiCustomTypeVariant
         if (i > 0) {
             fldOutStreamWrites(fp, ", ");
         }
-        const SwtiType* sub = variant->paramTypes[i];
+        const SwtiType* sub = variant->fields[i].fieldType;
         swtiDebugOutput(fp, 0, sub);
     }
     fldOutStreamWrites(fp, ")");
@@ -77,11 +77,11 @@ static void printFunctionType(FldOutStream* fp, const SwtiFunctionType* fn)
 static void printTupleType(FldOutStream* fp, const SwtiTupleType * fn)
 {
     fldOutStreamWrites(fp, "(");
-    for (size_t i = 0; i < fn->parameterCount; i++) {
+    for (size_t i = 0; i < fn->fieldCount; i++) {
         if (i > 0) {
             fldOutStreamWrites(fp, ", ");
         }
-        const SwtiType* sub = fn->parameterTypes[i];
+        const SwtiType* sub = fn->types[i];
         swtiDebugOutput(fp, 0, sub);
     }
     fldOutStreamWrites(fp, ")");

@@ -22,6 +22,8 @@ static int typesEqual(const SwtiType** a, const SwtiType** b, size_t count)
     return 0;
 }
 
+static
+
 static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVariant* b)
 {
     if (a->paramCount != b->paramCount) {
@@ -32,7 +34,16 @@ static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVari
         return -2;
     }
 
-    return typesEqual(a->paramTypes, b->paramTypes, a->paramCount);
+    for (size_t i=0; i<a->paramCount; ++i) {
+        if (!typeEqual(a->fields[i].fieldType, b->fields[i].fieldType)) {
+            return -3;
+        }
+        if (a->fields[i].memoryOffset != b->fields[i].memoryOffset) {
+            return -4;
+        }
+    }
+
+    return 0;
 }
 
 static int customEqual(const SwtiCustomType* a, const SwtiCustomType* b)
@@ -62,11 +73,11 @@ static int functionEqual(const SwtiFunctionType* a, const SwtiFunctionType* b)
 
 static int tupleEqual(const SwtiTupleType* a, const SwtiTupleType* b)
 {
-    if (a->parameterCount != b->parameterCount) {
+    if (a->fieldCount != b->fieldCount) {
         return -1;
     }
 
-    return typesEqual(a->parameterTypes, b->parameterTypes, a->parameterCount);
+    return typesEqual(a->fields, b->fields, a->fieldCount);
 }
 
 static int aliasEqual(const SwtiAliasType* a, const SwtiAliasType* b)

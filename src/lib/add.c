@@ -30,8 +30,14 @@ static int addCustomTypeVariant(SwtiChunk* target, const SwtiCustomTypeVariant* 
 {
     out->paramCount = source->paramCount;
     out->name = tc_str_dup(source->name);
+    out->fields = tc_malloc_type_count(SwtiCustomTypeVariantField, out->paramCount);
 
-    return addTypes(target, source->paramTypes, &out->paramTypes, source->paramCount);
+    for (size_t i=0; i<out->paramCount; ++i) {
+        addType(target, source->fields[i].fieldType, &out->fields[i].fieldType);
+        ((SwtiCustomTypeVariantField*)&out->fields[i])->memoryOffset = source->fields[i].memoryOffset;
+    }
+
+    return 0;
 }
 
 static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const SwtiCustomType** out)
@@ -78,11 +84,11 @@ static int addFunction(SwtiChunk* target, const SwtiFunctionType* source, const 
 static int addTuple(SwtiChunk* target, const SwtiTupleType* source, const SwtiTupleType** out)
 {
     SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
-    CLOG_VERBOSE("tuple count %zu", source->parameterCount);
-    swtiInitTuple(tuple, 0, source->parameterCount);
+    CLOG_VERBOSE("tuple count %zu", source->fieldCount);
+    swtiInitTuple(tuple, 0, source->fieldCount);
     *out = tuple;
 
-    return addTypes(target, source->parameterTypes, &tuple->parameterTypes, source->parameterCount);
+    return 0; // addTypes(target, source->parameterTypes, &tuple->parameterTypes, source->parameterCount);
 }
 
 static int addAlias(SwtiChunk* target, const SwtiAliasType* source, const SwtiAliasType** out)
