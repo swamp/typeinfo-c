@@ -25,24 +25,66 @@ void swtiChunkInit(SwtiChunk* self, const SwtiType** types, size_t typeCount)
 void swtiDestroyType(SwtiType* type)
 {
     switch (type->type) {
-        case SwtiTypeCustom:
-        case SwtiTypeFunction:
-        case SwtiTypeAlias:
-        case SwtiTypeRecord:
+        case SwtiTypeCustom: {
+            const SwtiCustomType * t = (const SwtiCustomType*) type;
+            //tc_free(t->internal.name);
+            for (size_t i=0; i<t->variantCount; ++i) {
+                tc_free(t->variantTypes[i].name);
+                tc_free(t->variantTypes[i].fields);
+                for (size_t j=0; j<t->variantTypes[i].paramCount; ++j) {
+                    //t->variantTypes[i].fields[j].
+                }
+            }
+            tc_free(t->variantTypes);
+            }          break;
+        case SwtiTypeFunction: {
+            const SwtiFunctionType* t = (const SwtiFunctionType*) type;
+            //tc_free(t->internal.name);
+            tc_free(t->parameterTypes);
+        } break;
+        case SwtiTypeAlias: {
+            const SwtiAliasType* t = (const SwtiAliasType*) type;
+            //tc_free(t->internal.name);
+        }  break;
+        case SwtiTypeRecord:{
+            const SwtiRecordType* t = (const SwtiRecordType*) type;
+            for (size_t i=0; i<t->fieldCount; ++i) {
+                tc_free(t->fields[i].name);
+            }
+            //tc_free(t->internal.name);
+            tc_free(t->fields);
+        } break;
         case SwtiTypeArray:
+            break;
         case SwtiTypeList:
-        case SwtiTypeString:
+            break;
+        case SwtiTypeString: {
+            const SwtiStringType* t = (const SwtiStringType*) type;
+            //tc_free(t->internal.name);
+        } break;
         case SwtiTypeInt:
+            break;
         case SwtiTypeFixed:
+            break;
         case SwtiTypeBoolean:
+            break;
         case SwtiTypeBlob:
+            break;
         case SwtiTypeResourceName:
-        case SwtiTypeTuple:
+            break;
+        case SwtiTypeTuple: {
+            const SwtiTupleType* t = (const SwtiTupleType*) type;
+            tc_free(t->fields);
+            tc_free(t->types);
+        } break;
         case SwtiTypeChar:
+            break;
         case SwtiTypeAny:
+            break;
         case SwtiTypeAnyMatchingTypes:
             break;
     }
+    tc_free(type->name);
     tc_free(type);
 }
 

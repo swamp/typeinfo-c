@@ -149,6 +149,7 @@ static int readCustomType(FldInStream* stream, SwtiCustomType** outCustom)
 {
     SwtiCustomType* custom = tc_malloc_type(SwtiCustomType);
     swtiInitCustom(custom, 0, 0, 0);
+    tc_free(custom->variantTypes);
     int error;
 
     if ((error = readString(stream, &custom->internal.name)) != 0) {
@@ -267,6 +268,7 @@ static int readFunction(FldInStream* stream, SwtiFunctionType** outFn)
 {
     struct SwtiFunctionType* fn = tc_malloc_type(SwtiFunctionType);
     swtiInitFunction(fn, 0, 0);
+    tc_free(fn->parameterTypes);
     int error;
     if ((error = readTypeRefs(stream, &fn->parameterTypes, &fn->parameterCount)) != 0) {
         *outFn = 0;
