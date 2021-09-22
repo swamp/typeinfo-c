@@ -3,6 +3,6 @@
 
     #define SWTI_VERSION_MAJOR (0)
     #define SWTI_VERSION_MINOR (1)
-    #define SWTI_VERSION_PATCH (6)
+    #define SWTI_VERSION_PATCH (7)
 
 #endif
