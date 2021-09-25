@@ -81,8 +81,8 @@ static void printTupleType(FldOutStream* fp, const SwtiTupleType * fn)
         if (i > 0) {
             fldOutStreamWrites(fp, ", ");
         }
-        const SwtiType* sub = fn->types[i];
-        swtiDebugOutput(fp, 0, sub);
+        const SwtiTupleTypeField* sub = &fn->fields[i];
+        swtiDebugOutput(fp, 0, sub->fieldType);
     }
     fldOutStreamWrites(fp, ")");
 }

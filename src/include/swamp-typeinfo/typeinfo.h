@@ -149,7 +149,6 @@ typedef struct SwtiTupleTypeField {
 SWTI_TYPE_START(TupleType)
     size_t fieldCount;
     const SwtiTupleTypeField* fields;
-    const SwtiType** types;
 SWTI_TYPE_END(TupleType)
 
 void swtiInitString(SwtiStringType* self);

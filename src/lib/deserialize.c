@@ -279,21 +279,40 @@ static int readFunction(FldInStream* stream, SwtiFunctionType** outFn)
     return 0;
 }
 
+
+static int readTupleField(FldInStream* stream, SwtiTupleTypeField* field)
+{
+    int memoryOffsetErr = readMemoryOffset(stream, &field->memoryOffset);
+    if (memoryOffsetErr < 0) {
+        return memoryOffsetErr;
+    }
+
+
+    int err = readTypeRef(stream, &field->fieldType);
+    if (err < 0) {
+        return err;
+    }
+
+    return 0;
+}
+
+
 static int readTuple(FldInStream* stream, SwtiTupleType** outTuple)
 {
     SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
     swtiInitTuple(tuple, 0, 0);
     int error;
-    if ((error = readTypeRefs(stream, &tuple->types, &tuple->fieldCount)) != 0) {
-        *outTuple = 0;
+
+    uint8_t fieldCount;
+    if ((error = fldInStreamReadUInt8(stream, &fieldCount)) != 0) {
         return error;
     }
 
-    SwtiTupleTypeField** fields = tc_malloc_type_count(SwtiTupleTypeField*, tuple->fieldCount);
+    tuple->fieldCount = fieldCount;
+    SwtiTupleTypeField* fields = tc_malloc_type_count(SwtiTupleTypeField, tuple->fieldCount);
     tuple->fields = fields;
-    for (size_t i=0; i<tuple->fieldCount; ++i) {
-        readMemoryOffset(stream, &tuple->fields[i].memoryOffset);
-        fields[i]->fieldType = tuple->types[i];
+    for (size_t i = 0; i < tuple->fieldCount; ++i) {
+        readTupleField(stream, &tuple->fields[i]);
     }
 
 

@@ -58,6 +58,20 @@ static int fixupRecordType(SwtiRecordType* record, const struct SwtiChunk* chunk
     return 0;
 }
 
+
+static int fixupTupleType(SwtiTupleType* tuple, const struct SwtiChunk* chunk)
+{
+    int error;
+    for (size_t i = 0; i < tuple->fieldCount; ++i) {
+        SwtiRecordTypeField* mutableField = (SwtiRecordTypeField*) &tuple->fields[i];
+        if ((error = fixupTypeRef(&mutableField->fieldType, chunk)) != 0) {
+            return error;
+        }
+    }
+
+    return 0;
+}
+
 static int fixupCustomType(SwtiCustomType* custom, const struct SwtiChunk* chunk)
 {
     int error;
@@ -88,7 +102,7 @@ static int fixupType(SwtiType* type, const SwtiChunk* chunk)
         }
         case SwtiTypeTuple: {
             SwtiTupleType* tuple = (SwtiTupleType*) type;
-            return fixupTypeRefs((const SwtiType**) tuple->types, tuple->fieldCount, chunk);
+            return fixupTupleType(tuple, chunk);
         }
         case SwtiTypeAlias: {
             SwtiAliasType* alias = (SwtiAliasType*) type;

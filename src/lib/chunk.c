@@ -75,7 +75,6 @@ void swtiDestroyType(SwtiType* type)
         case SwtiTypeTuple: {
             const SwtiTupleType* t = (const SwtiTupleType*) type;
             tc_free(t->fields);
-            tc_free(t->types);
         } break;
         case SwtiTypeChar:
             break;
