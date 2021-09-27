@@ -34,7 +34,7 @@ static int addCustomTypeVariant(SwtiChunk* target, const SwtiCustomTypeVariant* 
 
     for (size_t i=0; i<out->paramCount; ++i) {
         addType(target, source->fields[i].fieldType, &out->fields[i].fieldType);
-        ((SwtiCustomTypeVariantField*)&out->fields[i])->memoryOffset = source->fields[i].memoryOffset;
+        ((SwtiCustomTypeVariantField*)&out->fields[i])->memoryOffsetInfo.memoryOffset = source->fields[i].memoryOffsetInfo.memoryOffset;
     }
 
     return 0;

@@ -36,8 +36,9 @@ typedef enum SwtiTypeValue {
     SwtiTypeUnmanaged
 } SwtiTypeValue;
 
-typedef uint16_t MemoryOffset;
-typedef uint16_t MemorySize;
+typedef uint16_t SwtiMemoryOffset;
+typedef uint16_t SwtiMemorySize;
+typedef uint8_t SwtiMemoryAlign;
 
 typedef struct SwtiType {
     SwtiTypeValue type;
@@ -54,6 +55,16 @@ typedef struct SwtiType {
     }                                                                                                                  \
     Swti##name;
 
+typedef struct SwtiMemoryInfo {
+    SwtiMemorySize memorySize;
+    SwtiMemoryAlign memoryAlign;
+} SwtiMemoryInfo;
+
+typedef struct SwtiMemoryOffsetInfo {
+    SwtiMemoryOffset memoryOffset;
+    SwtiMemoryInfo memoryInfo;
+} SwtiMemoryOffsetInfo;
+
 typedef struct SwtiGenericParams {
     size_t genericCount;
     const SwtiType** genericTypes;
@@ -61,21 +72,34 @@ typedef struct SwtiGenericParams {
 
 typedef struct SwtiCustomTypeVariantField {
     const SwtiType* fieldType;
-    MemoryOffset memoryOffset;
+    SwtiMemoryOffsetInfo memoryOffsetInfo;
 } SwtiCustomTypeVariantField;
 
 typedef struct SwtiCustomTypeVariant {
     uint8_t paramCount;
-
     const SwtiCustomTypeVariantField* fields;
     const char* name;
+    SwtiMemoryInfo memoryInfo;
 } SwtiCustomTypeVariant;
 
 SWTI_TYPE_START(CustomType)
 SwtiGenericParams generic;
 size_t variantCount;
 const SwtiCustomTypeVariant* variantTypes;
+SwtiMemoryInfo memoryInfo;
 SWTI_TYPE_END(CustomType)
+
+typedef struct SwtiTupleTypeField {
+    const SwtiType* fieldType;
+    SwtiMemoryOffsetInfo memoryOffsetInfo;
+    const char* name;
+} SwtiTupleTypeField;
+
+SWTI_TYPE_START(TupleType)
+size_t fieldCount;
+const SwtiTupleTypeField* fields;
+SwtiMemoryInfo memoryInfo;
+SWTI_TYPE_END(TupleType)
 
 SWTI_TYPE_START(FunctionType)
 size_t parameterCount;
@@ -88,7 +112,7 @@ SWTI_TYPE_END(AliasType)
 
 typedef struct SwtiRecordTypeField {
     const SwtiType* fieldType;
-    MemoryOffset memoryOffset;
+    SwtiMemoryOffsetInfo memoryOffsetInfo;
     const char* name;
 } SwtiRecordTypeField;
 
@@ -96,18 +120,20 @@ SWTI_TYPE_START(RecordType)
 SwtiGenericParams generic;
 size_t fieldCount;
 const SwtiRecordTypeField* fields;
-MemorySize memorySize;
+SwtiMemoryInfo memoryInfo;
 SWTI_TYPE_END(RecordType)
 
 SWTI_TYPE_START(ArrayType)
 const SwtiType* itemType;
-MemorySize itemSize;
+SwtiMemoryInfo memoryInfo;
 SWTI_TYPE_END(ArrayType)
 
 SWTI_TYPE_START(ListType)
 const SwtiType* itemType;
-MemorySize itemSize;
+SwtiMemoryInfo memoryInfo;
 SWTI_TYPE_END(ListType)
+
+
 
 SWTI_TYPE_START(IntType)
 SWTI_TYPE_END(IntType)
@@ -140,16 +166,6 @@ SWTI_TYPE_END(ResourceNameType)
 SWTI_TYPE_START(CharType)
 SWTI_TYPE_END(CharType)
 
-typedef struct SwtiTupleTypeField {
-    const SwtiType* fieldType;
-    MemoryOffset memoryOffset;
-    const char* name;
-} SwtiTupleTypeField;
-
-SWTI_TYPE_START(TupleType)
-    size_t fieldCount;
-    const SwtiTupleTypeField* fields;
-SWTI_TYPE_END(TupleType)
 
 void swtiInitString(SwtiStringType* self);
 void swtiInitResourceName(SwtiResourceNameType* self);
@@ -178,5 +194,7 @@ char* swtiDebugString(const SwtiType* type, SwtiDebugOutputFlags flags, char* bu
 const SwtiType* swtiUnalias(const SwtiType* maybeAlias);
 const SwtiListType* swtiList(const SwtiType* maybeAlias);
 const SwtiRecordType* swtiRecord(const SwtiType* maybeRecord);
+SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type);
+SwtiMemorySize swtiGetMemorySize(const SwtiType* type);
 
 #endif

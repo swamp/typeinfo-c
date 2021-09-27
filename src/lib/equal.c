@@ -38,7 +38,7 @@ static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVari
         if (!typeEqual(a->fields[i].fieldType, b->fields[i].fieldType)) {
             return -3;
         }
-        if (a->fields[i].memoryOffset != b->fields[i].memoryOffset) {
+        if (a->fields[i].memoryOffsetInfo.memoryOffset != b->fields[i].memoryOffsetInfo.memoryOffset) {
             return -4;
         }
     }

@@ -33,12 +33,28 @@ static int readMemoryOffset(FldInStream* stream, uint16_t* memoryOffset)
     return fldInStreamReadUInt16(stream, memoryOffset);
 }
 
-
-static int readMemorySize(FldInStream* stream, uint16_t* memorySize)
+static int readMemoryInfo(FldInStream* stream, SwtiMemoryInfo* memoryInfo)
 {
-    return fldInStreamReadUInt16(stream, memorySize);
+    int err = fldInStreamReadUInt16(stream, &memoryInfo->memorySize);
+    if (err < 0) {
+        return err;
+    }
+    err = fldInStreamReadUInt8(stream, &memoryInfo->memoryAlign);
+    if (err < 0) {
+        return err;
+    }
+
+    return 0;
 }
 
+static int readMemoryOffsetInfo(FldInStream* stream, SwtiMemoryOffsetInfo* memoryOffset)
+{
+    int err = readMemoryOffset(stream, &memoryOffset->memoryOffset);
+    if (err < 0) {
+        return err;
+    }
+    return readMemoryInfo(stream, &memoryOffset->memoryInfo);
+}
 
 static int readTypeRef(FldInStream* stream, SwtiType** type)
 {
@@ -100,8 +116,7 @@ static int readVariantField(FldInStream* stream, SwtiCustomTypeVariantField* fie
         return err;
     }
 
-
-    int memoryOffsetErr = readMemoryOffset(stream, &field->memoryOffset);
+    int memoryOffsetErr = readMemoryOffsetInfo(stream, &field->memoryOffsetInfo);
     if (memoryOffsetErr < 0) {
         return memoryOffsetErr;
     }
@@ -116,7 +131,12 @@ static int readVariant(FldInStream* stream, SwtiCustomTypeVariant* variant)
     readString(stream, &name);
     variant->name = name;
 
-    int error = readCount(stream, &variant->paramCount);
+    int error = readMemoryInfo(stream, &variant->memoryInfo);
+    if (error < 0) {
+        return error;
+    }
+
+    error = readCount(stream, &variant->paramCount);
     if (error < 0) {
         return error;
     }
@@ -156,6 +176,11 @@ static int readCustomType(FldInStream* stream, SwtiCustomType** outCustom)
         return error;
     }
 
+    error = readMemoryInfo(stream, &custom->memoryInfo);
+    if (error < 0) {
+        return error;
+    }
+
     uint8_t variantCount;
     if ((error = fldInStreamReadUInt8(stream, &variantCount)) != 0) {
         return error;
@@ -184,7 +209,7 @@ static int readRecordField(FldInStream* stream, SwtiRecordTypeField* field)
         return error;
     }
 
-    error = readMemoryOffset(stream, &field->memoryOffset);
+    error = readMemoryOffsetInfo(stream, &field->memoryOffsetInfo);
     if (error < 0) {
         return error;
     }
@@ -212,6 +237,11 @@ static int readRecord(FldInStream* stream, SwtiRecordType** outRecord)
     swtiInitRecord(record);
     int error;
     uint8_t fieldCount;
+
+    if ((error = readMemoryInfo(stream, &record->memoryInfo)) != 0) {
+        return error;
+    }
+
     if ((error = fldInStreamReadUInt8(stream, &fieldCount)) != 0) {
         return error;
     }
@@ -236,7 +266,7 @@ static int readArray(FldInStream* stream, SwtiArrayType** outArray)
         return error;
     }
 
-    if ((error = readMemorySize(stream, (SwtiType**) &array->itemSize)) != 0) {
+    if ((error = readMemoryInfo(stream, (SwtiType**) &array->memoryInfo)) != 0) {
         *outArray = 0;
         return error;
     }
@@ -255,7 +285,7 @@ static int readList(FldInStream* stream, SwtiListType** outList)
         return error;
     }
 
-    if ((error = readMemorySize(stream, (SwtiType**) &list->itemSize)) != 0) {
+    if ((error = readMemoryInfo(stream, (SwtiType**) &list->memoryInfo)) != 0) {
         *outList = 0;
         return error;
     }
@@ -282,11 +312,10 @@ static int readFunction(FldInStream* stream, SwtiFunctionType** outFn)
 
 static int readTupleField(FldInStream* stream, SwtiTupleTypeField* field)
 {
-    int memoryOffsetErr = readMemoryOffset(stream, &field->memoryOffset);
+    int memoryOffsetErr = readMemoryOffsetInfo(stream, &field->memoryOffsetInfo);
     if (memoryOffsetErr < 0) {
         return memoryOffsetErr;
     }
-
 
     int err = readTypeRef(stream, &field->fieldType);
     if (err < 0) {
@@ -302,6 +331,10 @@ static int readTuple(FldInStream* stream, SwtiTupleType** outTuple)
     SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
     swtiInitTuple(tuple, 0, 0);
     int error;
+
+    if ((error = readMemoryInfo(stream, &tuple->memoryInfo)) != 0) {
+        return error;
+    }
 
     uint8_t fieldCount;
     if ((error = fldInStreamReadUInt8(stream, &fieldCount)) != 0) {

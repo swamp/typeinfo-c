@@ -70,7 +70,7 @@ static int writeVariant(FldOutStream* stream, const SwtiCustomTypeVariant* varia
 
     for (size_t i=0; i<variant->paramCount; ++i) {
         writeTypeRef(stream, variant->fields[i].fieldType);
-        writeMemoryOffset(stream, variant->fields[i].memoryOffset);
+        writeMemoryOffset(stream, variant->fields[i].memoryOffsetInfo.memoryOffset);
     }
 
     return 0;
