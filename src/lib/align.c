@@ -27,6 +27,10 @@ SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type) {
             const SwtiCustomType* custom = (const SwtiCustomType*) type;
             return custom->memoryInfo.memoryAlign;
         } break;
+        case SwtiTypeAlias: {
+            const SwtiAliasType* alias = (const SwtiAliasType*) type;
+            return swtiGetMemoryAlign(alias->targetType);
+        }
     }
 
     CLOG_ERROR("can not find alignment for type")

@@ -142,7 +142,7 @@ static void printCharType(FldOutStream* fp, const SwtiCharType* ch)
 
 static void printUnmanagedType(FldOutStream* fp, const SwtiUnmanagedType* unmanaged)
 {
-    fldOutStreamWrites(fp, "*Unmanaged*");
+    fldOutStreamWritef(fp, "Unmanaged<%s>", unmanaged->internal.name);
 }
 
 static void printIntType(FldOutStream* fp, const SwtiIntType* intType)

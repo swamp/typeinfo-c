@@ -19,6 +19,13 @@ SwtiMemorySize swtiGetMemorySize(const SwtiType* typeToCheck) {
             const SwtiRecordType* recordType = (const SwtiRecordType*) typeToCheck;
             return recordType->memoryInfo.memorySize;
         }
+        case SwtiTypeCustom: {
+            const SwtiCustomType* customType = (const SwtiCustomType*) typeToCheck;
+            return customType->memoryInfo.memorySize;
+        }
+        case SwtiTypeInt: {
+            return 4;
+        }
     }
 
     CLOG_ERROR("do not know memory size");
