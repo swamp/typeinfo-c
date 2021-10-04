@@ -82,6 +82,8 @@ void swtiDestroyType(SwtiType* type)
             break;
         case SwtiTypeAnyMatchingTypes:
             break;
+        case SwtiTypeUnmanaged:
+            break;
     }
     tc_free(type->name);
     tc_free(type);

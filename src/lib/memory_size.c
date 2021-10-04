@@ -26,7 +26,14 @@ SwtiMemorySize swtiGetMemorySize(const SwtiType* typeToCheck) {
         case SwtiTypeInt: {
             return 4;
         }
+        case SwtiTypeList: {
+            const SwtiListType* listType = (const SwtiListType*) typeToCheck;
+            return listType->memoryInfo.memorySize;
+        }
+        default: {
+            CLOG_ERROR("do not know memory size");
+        }
     }
 
-    CLOG_ERROR("do not know memory size");
+
 }

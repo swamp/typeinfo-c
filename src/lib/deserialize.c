@@ -372,7 +372,7 @@ static int readAlias(FldInStream* stream, SwtiAliasType** outAlias)
     return 0;
 }
 
-static readUnmanagedType(FldInStream* stream, SwtiUnmanagedType* unmanagedType)
+static int readUnmanagedType(FldInStream* stream, SwtiUnmanagedType* unmanagedType)
 {
     int error;
 
