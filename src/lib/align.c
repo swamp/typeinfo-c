@@ -23,6 +23,10 @@ SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type) {
             const SwtiArrayType* array = (const SwtiArrayType*) type;
             return array->memoryInfo.memoryAlign;
         } break;
+        case SwtiTypeBlob: {
+            const SwtiBlobType* blobType = (const SwtiBlobType*) type;
+            return 8;
+        } break;
         case SwtiTypeCustom: {
             const SwtiCustomType* custom = (const SwtiCustomType*) type;
             return custom->memoryInfo.memoryAlign;
@@ -34,8 +38,14 @@ SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type) {
         case SwtiTypeInt: {
             return 4;
         } break;
+        case SwtiTypeChar: {
+            return 4;
+        } break;
         case SwtiTypeBoolean: {
             return 1;
+        } break;
+        case SwtiTypeUnmanaged: {
+            return sizeof(void*);
         } break;
         default: {
             CLOG_ERROR("can not find alignment for type")
