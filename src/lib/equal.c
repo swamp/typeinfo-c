@@ -22,7 +22,6 @@ static int typesEqual(const SwtiType** a, const SwtiType** b, size_t count)
     return 0;
 }
 
-static
 
 static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVariant* b)
 {
