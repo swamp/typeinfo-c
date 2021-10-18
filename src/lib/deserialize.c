@@ -266,7 +266,7 @@ static int readArray(FldInStream* stream, SwtiArrayType** outArray)
         return error;
     }
 
-    if ((error = readMemoryInfo(stream, (SwtiType**) &array->memoryInfo)) != 0) {
+    if ((error = readMemoryInfo(stream, &array->memoryInfo)) != 0) {
         *outArray = 0;
         return error;
     }
@@ -285,7 +285,7 @@ static int readList(FldInStream* stream, SwtiListType** outList)
         return error;
     }
 
-    if ((error = readMemoryInfo(stream, (SwtiType**) &list->memoryInfo)) != 0) {
+    if ((error = readMemoryInfo(stream, &list->memoryInfo)) != 0) {
         *outList = 0;
         return error;
     }
