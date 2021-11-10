@@ -198,7 +198,7 @@ static int addType(SwtiChunk* target, const SwtiType* source, const SwtiType** o
             break;
         }
         case SwtiTypeUnmanaged: {
-            error = addUnmanaged(target, (const SwtiListType*) source, (const SwtiListType**) out);
+            error = addUnmanaged(target, (const SwtiUnmanagedType*) source, (const SwtiUnmanagedType**) out);
             break;
         }
         case SwtiTypeString: {
