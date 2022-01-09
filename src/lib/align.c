@@ -17,11 +17,11 @@ SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type) {
         } break;
         case SwtiTypeList: {
             const SwtiListType* list = (const SwtiListType*) type;
-            return list->memoryInfo.memoryAlign;
+            return 8;
         } break;
         case SwtiTypeArray: {
             const SwtiArrayType* array = (const SwtiArrayType*) type;
-            return array->memoryInfo.memoryAlign;
+            return 8;
         } break;
         case SwtiTypeBlob: {
             const SwtiBlobType* blobType = (const SwtiBlobType*) type;
