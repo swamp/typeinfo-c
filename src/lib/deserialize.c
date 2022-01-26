@@ -56,7 +56,7 @@ static int readMemoryOffsetInfo(FldInStream* stream, SwtiMemoryOffsetInfo* memor
     return readMemoryInfo(stream, &memoryOffset->memoryInfo);
 }
 
-static int readTypeRef(FldInStream* stream, SwtiType** type)
+static int readTypeRef(FldInStream* stream, const SwtiType** type)
 {
     uint16_t index;
     int error;
@@ -95,7 +95,7 @@ static int readTypeRefs(FldInStream* stream, const SwtiType*** outTypes, size_t*
         return error;
     }
 
-    SwtiType** types = tc_malloc_type_count(SwtiType*, count);
+    const SwtiType** types = tc_malloc_type_count(const SwtiType*, count);
     for (uint8_t i = 0; i < count; i++) {
         if ((error = readTypeRef(stream, &types[i])) != 0) {
             CLOG_ERROR("couldn't read type ref %d", error);
@@ -144,7 +144,7 @@ static int readVariant(FldInStream* stream, SwtiCustomTypeVariant* variant)
     SwtiCustomTypeVariantField* fields = tc_malloc_type_count(SwtiCustomTypeVariantField, variant->paramCount);
     variant->fields = fields;
     for (size_t i=0; i<variant->paramCount; ++i) {
-        int readErr = readVariantField(stream, &variant->fields[i]);
+        int readErr = readVariantField(stream, (SwtiCustomTypeVariantField *)&variant->fields[i]);
         if (readErr < 0) {
             return readErr;
         }
@@ -169,7 +169,7 @@ static int readCustomType(FldInStream* stream, SwtiCustomType** outCustom)
 {
     SwtiCustomType* custom = tc_malloc_type(SwtiCustomType);
     swtiInitCustom(custom, 0, 0, 0);
-    tc_free(custom->variantTypes);
+    tc_free((void*)custom->variantTypes);
     int error;
 
     if ((error = readString(stream, &custom->internal.name)) != 0) {
@@ -214,7 +214,7 @@ static int readRecordField(FldInStream* stream, SwtiRecordTypeField* field)
         return error;
     }
 
-    return readTypeRef(stream, (SwtiType**) &field->fieldType);
+    return readTypeRef(stream,  &field->fieldType);
 }
 
 static int readRecordFields(FldInStream* stream, SwtiRecordType* record, uint8_t count)
@@ -261,7 +261,7 @@ static int readArray(FldInStream* stream, SwtiArrayType** outArray)
     SwtiArrayType* array = tc_malloc_type(SwtiArrayType);
     swtiInitArray(array);
     int error;
-    if ((error = readTypeRef(stream, (SwtiType**) &array->itemType)) != 0) {
+    if ((error = readTypeRef(stream,  &array->itemType)) != 0) {
         *outArray = 0;
         return error;
     }
@@ -280,7 +280,7 @@ static int readList(FldInStream* stream, SwtiListType** outList)
     SwtiListType* list = tc_malloc_type(SwtiListType);
     swtiInitList(list);
     int error;
-    if ((error = readTypeRef(stream, (SwtiType**) &list->itemType)) != 0) {
+    if ((error = readTypeRef(stream,  &list->itemType)) != 0) {
         *outList = 0;
         return error;
     }
@@ -345,7 +345,7 @@ static int readTuple(FldInStream* stream, SwtiTupleType** outTuple)
     SwtiTupleTypeField* fields = tc_malloc_type_count(SwtiTupleTypeField, tuple->fieldCount);
     tuple->fields = fields;
     for (size_t i = 0; i < tuple->fieldCount; ++i) {
-        readTupleField(stream, &tuple->fields[i]);
+        readTupleField(stream, (SwtiTupleTypeField *)&tuple->fields[i]);
     }
 
 
@@ -362,7 +362,7 @@ static int readAlias(FldInStream* stream, SwtiAliasType** outAlias)
     }
     alias->internal.type = SwtiTypeAlias;
 
-    if ((error = readTypeRef(stream, (SwtiType**) &alias->targetType)) != 0) {
+    if ((error = readTypeRef(stream,  &alias->targetType)) != 0) {
         *outAlias = 0;
         return error;
     }

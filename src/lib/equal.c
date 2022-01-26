@@ -76,7 +76,7 @@ static int tupleEqual(const SwtiTupleType* a, const SwtiTupleType* b)
         return -1;
     }
 
-    return typesEqual(a->fields, b->fields, a->fieldCount);
+    return typesEqual(/*todo*/0,0, a->fieldCount);
 }
 
 static int aliasEqual(const SwtiAliasType* a, const SwtiAliasType* b)

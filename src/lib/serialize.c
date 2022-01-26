@@ -178,7 +178,7 @@ static int writeFunction(FldOutStream* stream, const SwtiFunctionType* fn)
 static int writeTuple(FldOutStream* stream, const SwtiTupleType* tuple)
 {
     int error;
-    if ((error = writeTypeRefs(stream, tuple->fields, tuple->fieldCount)) != 0) {
+    if ((error = writeTypeRefs(stream, 0 /*todo*/, tuple->fieldCount)) != 0) {
         return error;
     }
 

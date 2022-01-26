@@ -29,13 +29,13 @@ void swtiDestroyType(SwtiType* type)
             const SwtiCustomType * t = (const SwtiCustomType*) type;
             //tc_free(t->internal.name);
             for (size_t i=0; i<t->variantCount; ++i) {
-                tc_free(t->variantTypes[i].name);
-                tc_free(t->variantTypes[i].fields);
+                tc_free((void*)t->variantTypes[i].name);
+                tc_free((void*)t->variantTypes[i].fields);
                 for (size_t j=0; j<t->variantTypes[i].paramCount; ++j) {
                     //t->variantTypes[i].fields[j].
                 }
             }
-            tc_free(t->variantTypes);
+            tc_free((void*)t->variantTypes);
             }          break;
         case SwtiTypeFunction: {
             const SwtiFunctionType* t = (const SwtiFunctionType*) type;
@@ -49,10 +49,10 @@ void swtiDestroyType(SwtiType* type)
         case SwtiTypeRecord:{
             const SwtiRecordType* t = (const SwtiRecordType*) type;
             for (size_t i=0; i<t->fieldCount; ++i) {
-                tc_free(t->fields[i].name);
+                tc_free((void*)t->fields[i].name);
             }
             //tc_free(t->internal.name);
-            tc_free(t->fields);
+            tc_free((void*)t->fields);
         } break;
         case SwtiTypeArray:
             break;
@@ -74,7 +74,7 @@ void swtiDestroyType(SwtiType* type)
             break;
         case SwtiTypeTuple: {
             const SwtiTupleType* t = (const SwtiTupleType*) type;
-            tc_free(t->fields);
+            tc_free((void*)t->fields);
         } break;
         case SwtiTypeChar:
             break;
@@ -85,7 +85,7 @@ void swtiDestroyType(SwtiType* type)
         case SwtiTypeUnmanaged:
             break;
     }
-    tc_free(type->name);
+    tc_free((void*)type->name);
     tc_free(type);
 }
 

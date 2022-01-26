@@ -33,7 +33,7 @@ static int addCustomTypeVariant(SwtiChunk* target, const SwtiCustomTypeVariant* 
     out->fields = tc_malloc_type_count(SwtiCustomTypeVariantField, out->paramCount);
 
     for (size_t i=0; i<out->paramCount; ++i) {
-        addType(target, source->fields[i].fieldType, &out->fields[i].fieldType);
+        addType(target, source->fields[i].fieldType, (const SwtiType**) &out->fields[i].fieldType);
         ((SwtiCustomTypeVariantField*)&out->fields[i])->memoryOffsetInfo.memoryOffset = source->fields[i].memoryOffsetInfo.memoryOffset;
     }
 
