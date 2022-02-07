@@ -301,13 +301,6 @@ static int writeType(FldOutStream* stream, const SwtiType* type)
 int swtiSerializeToStream(FldOutStream* stream, const struct SwtiChunk* source)
 {
     int error;
-    uint8_t major;
-    uint8_t minor;
-    uint8_t patch;
-
-    major = 0;
-    minor = 1;
-    patch = 4;
 
     int tell = stream->pos;
 
