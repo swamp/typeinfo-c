@@ -22,7 +22,7 @@ void swtiChunkInit(SwtiChunk* self, const SwtiType** types, size_t typeCount)
     tc_memcpy_type(const SwtiType*, self->types, types, typeCount);
 }
 
-void swtiDestroyType(SwtiType* type)
+static void swtiDestroyType(SwtiType* type)
 {
     switch (type->type) {
         case SwtiTypeCustom: {

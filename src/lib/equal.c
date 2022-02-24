@@ -5,6 +5,7 @@
 #include <clog/clog.h>
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/typeinfo.h>
+#include <swamp-typeinfo/equal.h>
 
 static int typeEqual(const struct SwtiType* a, const struct SwtiType* b);
 //static int typeEqual(const struct SwtiType* a, const struct SwtiType* b);

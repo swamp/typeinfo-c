@@ -4,11 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/deserialize.h>
+#include <swamp-typeinfo/deserialize_internal.h>
 #include <swamp-typeinfo/typeinfo.h>
 
 #include <clog/clog.h>
 
-int fixupTypeRef(const SwtiType** type, const SwtiChunk* chunk)
+static int fixupTypeRef(const SwtiType** type, const SwtiChunk* chunk)
 {
     uintptr_t ptrValue = (uintptr_t)(*type);
     if (ptrValue >= 65535) {
