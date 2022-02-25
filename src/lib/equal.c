@@ -205,7 +205,7 @@ static int typeEqual(const struct SwtiType* a, const struct SwtiType* b)
             break;
         }
         default:
-            CLOG_ERROR("typeEqual: need information about type %d", a->type);
+            CLOG_ERROR("typeEqual: need information about type %d", a->type)
     }
 
     return error;

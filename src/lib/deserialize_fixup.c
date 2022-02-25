@@ -13,7 +13,7 @@ static int fixupTypeRef(const SwtiType** type, const SwtiChunk* chunk)
 {
     uintptr_t ptrValue = (uintptr_t)(*type);
     if (ptrValue >= 65535) {
-        CLOG_ERROR("illegal ref");
+        CLOG_ERROR("illegal ref")
         *type = 0;
         return -2;
     }
@@ -25,7 +25,7 @@ static int fixupTypeRef(const SwtiType** type, const SwtiChunk* chunk)
     *type = chunk->types[ptrValue];
 
     if (chunk->types[ptrValue]->index != ptrValue) {
-        CLOG_ERROR("problem");
+        CLOG_ERROR("problem")
         *type = 0;
         return -4;
     }

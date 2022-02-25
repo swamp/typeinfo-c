@@ -232,7 +232,7 @@ void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTyp
             printUnmanagedType(fp, (const SwtiUnmanagedType*) type);
             break;
         default:
-            CLOG_ERROR("swtidebugoutput unknown %d", type->type);
+            CLOG_ERROR("swtidebugoutput unknown %d", type->type)
     }
 }
 

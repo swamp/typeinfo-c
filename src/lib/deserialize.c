@@ -187,7 +187,7 @@ static int readCustomType(FldInStream* stream, SwtiCustomType** outCustom)
     }
 
     if (variantCount > 32) {
-        CLOG_ERROR("too many variants %d", variantCount);
+        CLOG_ERROR("too many variants %d", variantCount)
     }
 
     custom->variantCount = variantCount;
@@ -392,7 +392,7 @@ static int readType(FldInStream* stream, const SwtiType** outType)
     uint8_t typeValueRaw;
     int error;
     if ((error = fldInStreamReadUInt8(stream, &typeValueRaw)) != 0) {
-        CLOG_SOFT_ERROR("readType couldn't read type");
+        CLOG_SOFT_ERROR("readType couldn't read type")
         return error;
     }
 
@@ -516,7 +516,7 @@ static int readType(FldInStream* stream, const SwtiType** outType)
             break;
         }
         default:
-            CLOG_ERROR("type information: readType unknown type:%d", typeValue);
+            CLOG_ERROR("type information: readType unknown type:%d", typeValue)
             return -14;
     }
 

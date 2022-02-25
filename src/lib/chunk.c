@@ -150,7 +150,7 @@ const SwtiType* swtiChunkGetFromName(const SwtiChunk* self, const char* typeToSe
 {
     int index = swtiChunkFindFromName(self, typeToSearchFor);
     if (index < 0) {
-        CLOG_ERROR("couldn't find type '%s'", typeToSearchFor);
+        CLOG_ERROR("couldn't find type '%s'", typeToSearchFor)
         return 0;
     }
 
