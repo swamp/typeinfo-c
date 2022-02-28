@@ -8,7 +8,6 @@
 #include <swamp-typeinfo/typeinfo.h>
 #include <tiny-libc/tiny_libc.h>
 #include <clog/clog.h>
-#include <swamp-typeinfo/fnv.h>
 #include <swamp-typeinfo/version.h>
 
 static int writeString(FldOutStream* stream, const char* outString)
