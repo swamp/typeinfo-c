@@ -322,6 +322,8 @@ static int readTupleField(FldInStream* stream, SwtiTupleTypeField* field)
         return err;
     }
 
+    field->name = tc_str_dup("");
+
     return 0;
 }
 

@@ -178,7 +178,7 @@ void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self);
 void swtiInitBlob(SwtiBlobType* self);
 void swtiInitFunction(SwtiFunctionType* self, const SwtiType* types[], size_t typeCount);
-void swtiInitTuple(SwtiTupleType* self, const SwtiType* types[], size_t typeCount);
+void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField types[], size_t typeCount);
 void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount);
 void swtiInitRecord(SwtiRecordType* self);
 void swtiInitAlias(SwtiAliasType* self, const char* name, const SwtiType* targetType);
@@ -196,5 +196,9 @@ const SwtiListType* swtiList(const SwtiType* maybeAlias);
 const SwtiRecordType* swtiRecord(const SwtiType* maybeRecord);
 SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type);
 SwtiMemorySize swtiGetMemorySize(const SwtiType* type);
+
+int swtiVerifyMemoryInfo(const SwtiMemoryInfo* info);
+int swtiVerifyMemoryOffsetInfo(const SwtiMemoryOffsetInfo* info);
+int swtiVerifyTuple(const SwtiTupleType* tuple);
 
 #endif

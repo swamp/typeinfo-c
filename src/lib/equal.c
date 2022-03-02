@@ -24,6 +24,32 @@ static int typesEqual(const SwtiType** a, const SwtiType** b, size_t count)
 }
 
 
+static int memoryInfoEqual(const SwtiMemoryInfo* a, const SwtiMemoryInfo* b)
+{
+    if (a->memorySize != b->memorySize) {
+        return -5;
+    }
+    if (a->memoryAlign != b->memoryAlign) {
+        return -7;
+    }
+
+    return 0;
+}
+
+static int memoryOffsetInfoEqual(const SwtiMemoryOffsetInfo* a, const SwtiMemoryOffsetInfo* b)
+{
+    int result = memoryInfoEqual(&a->memoryInfo, &b->memoryInfo);
+    if (result != 0) {
+        return result;
+    }
+
+    if (a->memoryOffset != b->memoryOffset) {
+        return -3;
+    }
+
+    return 0;
+}
+
 static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVariant* b)
 {
     if (a->paramCount != b->paramCount) {
@@ -32,6 +58,10 @@ static int variantEqual(const SwtiCustomTypeVariant* a, const SwtiCustomTypeVari
 
     if (!tc_str_equal(a->name, b->name)) {
         return -2;
+    }
+
+    if (memoryInfoEqual(&a->memoryInfo, &b->memoryInfo) < 0) {
+        return -3;
     }
 
     for (size_t i=0; i<a->paramCount; ++i) {
@@ -77,6 +107,10 @@ static int tupleEqual(const SwtiTupleType* a, const SwtiTupleType* b)
         return -1;
     }
 
+    if (memoryInfoEqual(&a->memoryInfo, &b->memoryInfo) < 0) {
+        return -3;
+    }
+
     return typesEqual(/*todo*/0,0, a->fieldCount);
 }
 
@@ -89,10 +123,16 @@ static int aliasEqual(const SwtiAliasType* a, const SwtiAliasType* b)
     return typeEqual(a->targetType, b->targetType);
 }
 
+
+
 static int fieldEqual(const SwtiRecordTypeField* a, const SwtiRecordTypeField* b)
 {
     if (!tc_str_equal(a->name, b->name)) {
         return -2;
+    }
+
+    if (memoryOffsetInfoEqual(&a->memoryOffsetInfo, &b->memoryOffsetInfo) < 0) {
+        return -3;
     }
 
     return typeEqual(a->fieldType, b->fieldType);
@@ -116,11 +156,21 @@ static int recordEqual(const SwtiRecordType* a, const SwtiRecordType* b)
 
 static int arrayEqual(const SwtiArrayType* a, const SwtiArrayType* b)
 {
+    int memoryEqual = memoryInfoEqual(&a->memoryInfo, &b->memoryInfo);
+    if (memoryEqual != 0) {
+        return memoryEqual;
+    }
+
     return typeEqual(a->itemType, b->itemType);
 }
 
 static int listEqual(const SwtiListType* a, const SwtiListType* b)
 {
+    int memoryEqual = memoryInfoEqual(&a->memoryInfo, &b->memoryInfo);
+    if (memoryEqual != 0) {
+        return memoryEqual;
+    }
+
     return typeEqual(a->itemType, b->itemType);
 }
 

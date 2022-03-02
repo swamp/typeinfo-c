@@ -81,14 +81,33 @@ static int addFunction(SwtiChunk* target, const SwtiFunctionType* source, const 
     return addTypes(target, source->parameterTypes, &fn->parameterTypes, source->parameterCount);
 }
 
+static int addTupleField(SwtiChunk* target, const SwtiTupleTypeField* source, SwtiTupleTypeField* out)
+{
+    if (!source->name) {
+        CLOG_ERROR("name must be set")
+    }
+    out->name = tc_str_dup(source->name);
+    out->memoryOffsetInfo = source->memoryOffsetInfo;
+    return addType(target, source->fieldType, &out->fieldType);
+}
+
 static int addTuple(SwtiChunk* target, const SwtiTupleType* source, const SwtiTupleType** out)
 {
     SwtiTupleType* tuple = tc_malloc_type(SwtiTupleType);
-    CLOG_VERBOSE("tuple count %zu", source->fieldCount);
-    swtiInitTuple(tuple, 0, source->fieldCount);
-    *out = tuple;
+    tuple->fields = tc_malloc_type_count(SwtiTupleTypeField, source->fieldCount);
+    tuple->fieldCount = source->fieldCount;
+    tuple->memoryInfo = source->memoryInfo;
 
-    return 0; // addTypes(target, source->parameterTypes, &tuple->parameterTypes, source->parameterCount);
+    int error;
+    for (size_t i = 0; i < source->fieldCount; ++i) {
+        if ((error = addTupleField(target, &source->fields[i], (struct SwtiTupleTypeField*) &tuple->fields[i])) < 0) {
+            *out = 0;
+            return error;
+        }
+    }
+
+    *out = tuple;
+    return 0;
 }
 
 static int addAlias(SwtiChunk* target, const SwtiAliasType* source, const SwtiAliasType** out)
@@ -99,9 +118,10 @@ static int addAlias(SwtiChunk* target, const SwtiAliasType* source, const SwtiAl
     return addType(target, source->targetType, &alias->targetType);
 }
 
-static int addField(SwtiChunk* target, const SwtiRecordTypeField* source, SwtiRecordTypeField* out)
+static int addRecordField(SwtiChunk* target, const SwtiRecordTypeField* source, SwtiRecordTypeField* out)
 {
     out->name = tc_str_dup(source->name);
+    out->memoryOffsetInfo = source->memoryOffsetInfo;
     return addType(target, source->fieldType, &out->fieldType);
 }
 
@@ -114,7 +134,7 @@ static int addRecord(SwtiChunk* target, const SwtiRecordType* source, const Swti
 
     int error;
     for (size_t i = 0; i < source->fieldCount; ++i) {
-        if ((error = addField(target, &source->fields[i], (struct SwtiRecordTypeField*) &record->fields[i])) < 0) {
+        if ((error = addRecordField(target, &source->fields[i], (struct SwtiRecordTypeField*) &record->fields[i])) < 0) {
             *out = 0;
             return error;
         }
@@ -129,6 +149,7 @@ static int addArray(SwtiChunk* target, const SwtiArrayType* source, const SwtiAr
     SwtiArrayType* array = tc_malloc_type(SwtiArrayType);
     swtiInitArray(array);
     *out = array;
+    array->memoryInfo = source->memoryInfo;
 
     return addType(target, source->itemType, &array->itemType);
 }
@@ -138,7 +159,7 @@ static int addList(SwtiChunk* target, const SwtiListType* source, const SwtiList
     SwtiListType* list = tc_malloc_type(SwtiListType);
     swtiInitList(list);
     *out = list;
-
+    list->memoryInfo = source->memoryInfo;
     return addType(target, source->itemType, &list->itemType);
 }
 

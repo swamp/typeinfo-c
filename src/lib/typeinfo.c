@@ -106,13 +106,64 @@ void swtiInitFunction(SwtiFunctionType* self, const SwtiType** types, size_t typ
     tc_memcpy_type_n(self->parameterTypes, types, typeCount);
 }
 
-void swtiInitTuple(SwtiTupleType* self, const SwtiType** types, size_t typeCount)
+int swtiVerifyMemoryInfo(const SwtiMemoryInfo* info)
+{
+    if (info->memoryAlign < 1 || info->memoryAlign > 8) {
+        return -55;
+    }
+
+    if (info->memorySize < 1 || info->memorySize > 256) {
+        return -68;
+    }
+
+    return 0;
+}
+
+int swtiVerifyMemoryOffsetInfo(const SwtiMemoryOffsetInfo* info)
+{
+    if (swtiVerifyMemoryInfo(&info->memoryInfo) < 0) {
+        return -54;
+    }
+
+    if (info->memoryOffset > 256) {
+        return -52;
+    }
+
+    return 0;
+}
+
+int swtiVerifyTuple(const SwtiTupleType* self)
+{
+    if (self->fieldCount < 1 || self->fieldCount > 16) {
+        return -1;
+    }
+
+    for (size_t i=0; i<self->fieldCount; ++i) {
+        const SwtiTupleTypeField* field = &self->fields[i];
+        if (!field->name || *field->name == 0xbe) {
+            return -4;
+        }
+        if (swtiVerifyMemoryOffsetInfo(&field->memoryOffsetInfo) < 0) {
+            return -5;
+        }
+    }
+
+    return 0;
+}
+
+
+void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[], size_t typeCount)
 {
     self->internal.type = SwtiTypeTuple;
     self->internal.name = tc_str_dup("Tuple");
     self->internal.hash = 0x0000;
     self->fieldCount = typeCount;
+
     self->fields = calloc(typeCount, sizeof(SwtiTupleTypeField *));
+    for (size_t i=0; i<self->fieldCount; ++i) {
+        ((SwtiTupleTypeField *)&self->fields[i])->memoryOffsetInfo = sourceFields[i].memoryOffsetInfo;
+        *(char **)&self->fields[i].name = tc_str_dup(sourceFields[i].name);
+    }
 }
 
 
