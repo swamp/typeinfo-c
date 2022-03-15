@@ -8,9 +8,5 @@ name = 'piot/clog'
 version = "*"
 
 [[dependencies]]
-name = 'swamp/runtime-c'
-version = "*"
-
-[[dependencies]]
 name = 'piot/flood-c'
 version = "*"

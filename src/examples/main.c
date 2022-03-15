@@ -41,6 +41,7 @@ void test()
     SwtiRecordType r;
     swtiInitRecordWithFields(&r, fields, sizeof(fields) / sizeof(fields[0]));
 
+/*
     SwtiCustomTypeVariant v1;
     v1.paramTypes = 0;
     v1.paramCount = 0;
@@ -53,7 +54,7 @@ void test()
     v2.name = "Just";
 
     const SwtiCustomTypeVariant variants[] = {v2, v1};
-
+*/
     const SwtiType* generics[] = {(const SwtiType*) &integer};
     SwtiCustomType c;
     swtiInitCustomWithGenerics(&c, "Result", generics, 1, variants, sizeof(variants) / sizeof(variants[0]));

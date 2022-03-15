@@ -37,10 +37,10 @@ endif()
 target_compile_options(swamp_typeinfo PRIVATE -Wall -Wextra -Wshadow -Weffc++ -Wstrict-aliasing -ansi -pedantic -Wno-unused-function -Wno-unused-parameter)
 
 
-target_include_directories(swamp_typeinfo PRIVATE ${deps}runtime-c/src/include)
-target_include_directories(swamp_typeinfo PRIVATE ${deps}tiny-libc/src/include)
-target_include_directories(swamp_typeinfo PRIVATE ${deps}flood-c/src/include)
-target_include_directories(swamp_typeinfo PRIVATE ${deps}clog/src/include)
+target_include_directories(swamp_typeinfo PRIVATE ${deps}swamp/runtime-c/src/include)
+target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/tiny-libc/src/include)
+target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/flood-c/src/include)
+target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/clog/src/include)
 target_include_directories(swamp_typeinfo PUBLIC include)
 
 
