@@ -231,6 +231,9 @@ void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTyp
         case SwtiTypeUnmanaged:
             printUnmanagedType(fp, (const SwtiUnmanagedType*) type);
             break;
+        case SwtiTypeResourceName:
+            fldOutStreamWritef(fp, "resource name %p", (const SwtiResourceNameType*) type);
+            break;
         default:
             CLOG_ERROR("swtidebugoutput unknown %d", type->type)
     }
