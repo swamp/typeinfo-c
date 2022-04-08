@@ -102,7 +102,7 @@ void swtiInitFunction(SwtiFunctionType* self, const SwtiType** types, size_t typ
     self->internal.name = tc_str_dup("Function");
     self->internal.hash = 0x0000;
     self->parameterCount = typeCount;
-    self->parameterTypes = calloc(typeCount, sizeof(SwtiType*));
+    self->parameterTypes = tc_calloc(typeCount, sizeof(SwtiType*));
     tc_memcpy_type_n(self->parameterTypes, types, typeCount);
 }
 
@@ -159,7 +159,7 @@ void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[],
     self->internal.hash = 0x0000;
     self->fieldCount = typeCount;
 
-    self->fields = calloc(typeCount, sizeof(SwtiTupleTypeField *));
+    self->fields = tc_calloc(typeCount, sizeof(SwtiTupleTypeField *));
     for (size_t i=0; i<self->fieldCount; ++i) {
         ((SwtiTupleTypeField *)&self->fields[i])->memoryOffsetInfo = sourceFields[i].memoryOffsetInfo;
         *(char **)&self->fields[i].name = tc_str_dup(sourceFields[i].name);
@@ -180,7 +180,7 @@ void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fi
 {
     swtiInitRecord(self);
     self->fieldCount = fieldCount;
-    self->fields = calloc(fieldCount, sizeof(SwtiRecordTypeField));
+    self->fields = tc_calloc(fieldCount, sizeof(SwtiRecordTypeField));
     tc_memcpy_type_n(self->fields, fields, fieldCount);
 }
 
@@ -190,7 +190,7 @@ void swtiInitCustom(SwtiCustomType* self, const char* name, const SwtiCustomType
     self->internal.name = name;
     self->internal.hash = 0x0000;
     self->variantCount = variantCount;
-    self->variantTypes = calloc(variantCount, sizeof(SwtiCustomTypeVariant));
+    self->variantTypes = tc_calloc(variantCount, sizeof(SwtiCustomTypeVariant));
     self->generic.genericTypes = 0;
     self->generic.genericCount = 0;
     tc_memcpy_type_n(self->variantTypes, variants, variantCount);
@@ -199,7 +199,7 @@ void swtiInitCustom(SwtiCustomType* self, const char* name, const SwtiCustomType
 static void initGenerics(SwtiGenericParams* self, const SwtiType* types[], size_t typeCount)
 {
     self->genericCount = typeCount;
-    self->genericTypes = calloc(typeCount, sizeof(SwtiType*));
+    self->genericTypes = tc_calloc(typeCount, sizeof(SwtiType*));
     tc_memcpy_type_n(self->genericTypes, types, typeCount);
 }
 
