@@ -171,14 +171,14 @@ int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
     return -1;
 }
 
-int swtiChunkInitOnlyOneType(SwtiChunk* targetChunk, const SwtiType *rootType, int* index)
+int swtiChunkInitOnlyOneType(SwtiChunk* targetChunk, const SwtiType *rootType, int* index, struct ImprintAllocator* allocator)
 {
     swtiChunkInit(targetChunk, 0, 0);
     targetChunk->maxCount = 8*1024;
     targetChunk->types = tc_malloc_type_count(const SwtiType*, targetChunk->maxCount);
 
     int rootTypeIndex;
-    if ((rootTypeIndex = swtiChunkAddType(targetChunk, rootType)) < 0) {
+    if ((rootTypeIndex = swtiChunkAddType(targetChunk, rootType, allocator)) < 0) {
         *index = rootTypeIndex;
         return rootTypeIndex;
     }

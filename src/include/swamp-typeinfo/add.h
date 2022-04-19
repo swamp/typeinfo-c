@@ -7,7 +7,8 @@
 
 struct SwtiChunk;
 struct SwtiType;
+struct ImprintAllocator;
 
-int swtiChunkAddType(struct SwtiChunk* target, const struct SwtiType* source);
+int swtiChunkAddType(struct SwtiChunk* target, const struct SwtiType* source, struct ImprintAllocator* allocator);
 
 #endif

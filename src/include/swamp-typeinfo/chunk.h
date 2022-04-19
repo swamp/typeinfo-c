@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 struct SwtiType;
+struct ImprintAllocator;
 
 /***
  * Holds information for all the types for the package.
@@ -28,7 +29,7 @@ const struct SwtiType* swtiChunkTypeFromIndex(const SwtiChunk* self, size_t inde
 const struct SwtiType* swtiChunkGetFromName(const SwtiChunk* self, const char* typeToSearchFor);
 
 int swtiChunkCopy(const SwtiChunk* self, const struct SwtiType* type);
-int swtiChunkInitOnlyOneType(SwtiChunk* self, const struct SwtiType *rootType, int* index);
+int swtiChunkInitOnlyOneType(SwtiChunk* self, const struct SwtiType *rootType, int* index, struct ImprintAllocator* allocator);
 
 void swtiChunkDebugOutput(const SwtiChunk* self, int flags, const char* debug);
 
