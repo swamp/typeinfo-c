@@ -2,6 +2,7 @@
  *  Copyright (c) Peter Bjorklund. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+#include <imprint/allocator.h>
 #include <memory.h>
 #include <swamp-typeinfo/typeinfo.h>
 #include <tiny-libc/tiny_libc.h>
@@ -96,13 +97,13 @@ void swtiInitList(SwtiListType* self)
     self->internal.index = 0xffff;
 }
 
-void swtiInitFunction(SwtiFunctionType* self, const SwtiType** types, size_t typeCount)
+void swtiInitFunction(SwtiFunctionType* self, const SwtiType** types, size_t typeCount, ImprintAllocator* allocator)
 {
     self->internal.type = SwtiTypeFunction;
     self->internal.name = tc_str_dup("Function");
     self->internal.hash = 0x0000;
     self->parameterCount = typeCount;
-    self->parameterTypes = tc_calloc(typeCount, sizeof(SwtiType*));
+    self->parameterTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, const SwtiType*, typeCount);
     tc_memcpy_type_n(self->parameterTypes, types, typeCount);
 }
 
@@ -152,14 +153,14 @@ int swtiVerifyTuple(const SwtiTupleType* self)
 }
 
 
-void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[], size_t typeCount)
+void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[], size_t typeCount, ImprintAllocator* allocator)
 {
     self->internal.type = SwtiTypeTuple;
     self->internal.name = tc_str_dup("Tuple");
     self->internal.hash = 0x0000;
     self->fieldCount = typeCount;
 
-    self->fields = tc_calloc(typeCount, sizeof(SwtiTupleTypeField *));
+    self->fields = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiTupleTypeField, typeCount);
     for (size_t i=0; i<self->fieldCount; ++i) {
         ((SwtiTupleTypeField *)&self->fields[i])->memoryOffsetInfo = sourceFields[i].memoryOffsetInfo;
         *(char **)&self->fields[i].name = tc_str_dup(sourceFields[i].name);
@@ -176,38 +177,38 @@ void swtiInitRecord(SwtiRecordType* self)
     self->fields = 0;
 }
 
-void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount)
+void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount, ImprintAllocator* allocator)
 {
     swtiInitRecord(self);
     self->fieldCount = fieldCount;
-    self->fields = tc_calloc(fieldCount, sizeof(SwtiRecordTypeField));
+    self->fields = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiRecordTypeField, fieldCount);
     tc_memcpy_type_n(self->fields, fields, fieldCount);
 }
 
-void swtiInitCustom(SwtiCustomType* self, const char* name, const SwtiCustomTypeVariant variants[], size_t variantCount)
+void swtiInitCustom(SwtiCustomType* self, const char* name, const SwtiCustomTypeVariant variants[], size_t variantCount, ImprintAllocator* allocator)
 {
     self->internal.type = SwtiTypeCustom;
     self->internal.name = name;
     self->internal.hash = 0x0000;
     self->variantCount = variantCount;
-    self->variantTypes = tc_calloc(variantCount, sizeof(SwtiCustomTypeVariant));
+    self->variantTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiCustomTypeVariant, variantCount);
     self->generic.genericTypes = 0;
     self->generic.genericCount = 0;
     tc_memcpy_type_n(self->variantTypes, variants, variantCount);
 }
 
-static void initGenerics(SwtiGenericParams* self, const SwtiType* types[], size_t typeCount)
+static void initGenerics(SwtiGenericParams* self, const SwtiType* types[], size_t typeCount, ImprintAllocator* allocator)
 {
     self->genericCount = typeCount;
-    self->genericTypes = tc_calloc(typeCount, sizeof(SwtiType*));
+    self->genericTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, const SwtiType*, typeCount);
     tc_memcpy_type_n(self->genericTypes, types, typeCount);
 }
 
 void swtiInitCustomWithGenerics(SwtiCustomType* self, const char* name,  const SwtiType* types[], size_t typeCount,
-                                const SwtiCustomTypeVariant variants[], size_t variantCount)
+                                const SwtiCustomTypeVariant variants[], size_t variantCount, struct ImprintAllocator* allocator)
 {
-    swtiInitCustom(self, name, variants, variantCount);
-    initGenerics(&self->generic, types, typeCount);
+    swtiInitCustom(self, name, variants, variantCount, allocator);
+    initGenerics(&self->generic, types, typeCount, allocator);
 }
 
 void swtiInitAlias(SwtiAliasType* self, const char* name, const SwtiType* targetType)

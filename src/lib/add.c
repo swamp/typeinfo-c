@@ -44,7 +44,7 @@ static int addCustomTypeVariant(SwtiChunk* target, const SwtiCustomTypeVariant* 
 static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const SwtiCustomType** out, ImprintAllocator* allocator)
 {
     SwtiCustomType* custom = IMPRINT_ALLOC_TYPE(allocator, SwtiCustomType);
-    swtiInitCustom(custom, tc_str_dup(source->internal.name), 0, 0);
+    swtiInitCustom(custom, tc_str_dup(source->internal.name), 0, 0, allocator);
 
     custom->variantTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiCustomTypeVariant, source->variantCount);
     custom->variantCount = source->variantCount;
@@ -76,7 +76,7 @@ static int addUnmanaged(SwtiChunk* target, const SwtiUnmanagedType* source, cons
 static int addFunction(SwtiChunk* target, const SwtiFunctionType* source, const SwtiFunctionType** out, ImprintAllocator* allocator)
 {
     SwtiFunctionType* fn = IMPRINT_ALLOC_TYPE(allocator, SwtiFunctionType);
-    swtiInitFunction(fn, source->parameterTypes, source->parameterCount);
+    swtiInitFunction(fn, source->parameterTypes, source->parameterCount, allocator);
     *out = fn;
 
     return addTypes(target, source->parameterTypes, &fn->parameterTypes, source->parameterCount, allocator);

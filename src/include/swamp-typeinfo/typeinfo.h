@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 struct FldOutStream;
+struct ImprintAllocator;
 
 typedef enum SwtiDebugOutputFlags {
     SwtiDebugOutputFlagsExpandAlias = 1
@@ -177,14 +178,14 @@ void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self);
 void swtiInitBlob(SwtiBlobType* self);
-void swtiInitFunction(SwtiFunctionType* self, const SwtiType* types[], size_t typeCount);
-void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField types[], size_t typeCount);
-void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount);
+void swtiInitFunction(SwtiFunctionType* self, const SwtiType* types[], size_t typeCount, struct ImprintAllocator* allocator);
+void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField types[], size_t typeCount, struct ImprintAllocator* allocator);
+void swtiInitRecordWithFields(SwtiRecordType* self, const SwtiRecordTypeField fields[], size_t fieldCount, struct ImprintAllocator* allocator);
 void swtiInitRecord(SwtiRecordType* self);
 void swtiInitAlias(SwtiAliasType* self, const char* name, const SwtiType* targetType);
-void swtiInitCustom(SwtiCustomType* self, const char* name,  const SwtiCustomTypeVariant variants[], size_t variantCount);
+void swtiInitCustom(SwtiCustomType* self, const char* name,  const SwtiCustomTypeVariant variants[], size_t variantCount, struct ImprintAllocator* allocator);
 void swtiInitCustomWithGenerics(SwtiCustomType* self, const char* name, const SwtiType* types[], size_t typeCount,
-                                const SwtiCustomTypeVariant variants[], size_t variantCount);
+                                const SwtiCustomTypeVariant variants[], size_t variantCount, struct ImprintAllocator* allocator);
 
 void swtiInitArray(SwtiArrayType* self);
 void swtiInitList(SwtiListType* self);
