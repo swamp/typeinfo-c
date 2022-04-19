@@ -173,7 +173,7 @@ void swtiInitResourceName(SwtiResourceNameType* self);
 void swtiInitChar(SwtiCharType* self);
 void swtiInitInt(SwtiIntType* self);
 void swtiInitAny(SwtiAnyType* self);
-void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name);
+void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name, struct ImprintAllocator* allocator);
 void swtiInitFixed(SwtiFixedType* self);
 void swtiInitBoolean(SwtiBooleanType* self);
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self);

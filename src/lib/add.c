@@ -66,7 +66,7 @@ static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const 
 static int addUnmanaged(SwtiChunk* target, const SwtiUnmanagedType* source, const SwtiUnmanagedType** out, ImprintAllocator* allocator)
 {
     SwtiUnmanagedType* unmanagedType = IMPRINT_ALLOC_TYPE(allocator, SwtiUnmanagedType);
-    swtiInitUnmanaged(unmanagedType, source->userTypeId, source->internal.name);
+    swtiInitUnmanaged(unmanagedType, source->userTypeId, source->internal.name, allocator);
 
     *out = unmanagedType;
 

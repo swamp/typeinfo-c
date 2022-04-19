@@ -10,43 +10,43 @@
 void swtiInitString(SwtiStringType* self)
 {
     self->internal.type = SwtiTypeString;
-    self->internal.name = tc_str_dup("String");
+    self->internal.name = "String";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitResourceName(SwtiResourceNameType* self)
 {
     self->internal.type = SwtiTypeResourceName;
-    self->internal.name = tc_str_dup("ResourceName");
+    self->internal.name = "ResourceName";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitChar(SwtiCharType* self)
 {
     self->internal.type = SwtiTypeChar;
-    self->internal.name = tc_str_dup("Char");
+    self->internal.name = "Char";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitInt(SwtiIntType* self)
 {
     self->internal.type = SwtiTypeInt;
-    self->internal.name = tc_str_dup("Int");
+    self->internal.name = "Int";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitAny(SwtiAnyType* self)
 {
     self->internal.type = SwtiTypeAny;
-    self->internal.name = tc_str_dup("Any");
+    self->internal.name = "Any";
     self->internal.hash = 0x0000;
 }
 
-void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name)
+void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name, ImprintAllocator* allocator)
 {
     self->internal.type = SwtiTypeUnmanaged;
     if (name != 0) {
-        self->internal.name = tc_strdup(name);
+        self->internal.name = imprintStrDup(allocator, name);
     } else {
         self->internal.name = 0;
     }
@@ -57,42 +57,42 @@ void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char*
 void swtiInitAnyMatchingTypes(SwtiAnyMatchingTypesType * self)
 {
     self->internal.type = SwtiTypeAnyMatchingTypes;
-    self->internal.name = tc_str_dup("*");
+    self->internal.name = "*";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitFixed(SwtiFixedType* self)
 {
     self->internal.type = SwtiTypeFixed;
-    self->internal.name = tc_str_dup("Fixed");
+    self->internal.name = "Fixed";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitBoolean(SwtiBooleanType* self)
 {
     self->internal.type = SwtiTypeBoolean;
-    self->internal.name = tc_str_dup("Bool");
+    self->internal.name = "Bool";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitBlob(SwtiBlobType* self)
 {
     self->internal.type = SwtiTypeBlob;
-    self->internal.name = tc_str_dup("Blob");
+    self->internal.name = "Blob";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitArray(SwtiArrayType* self)
 {
     self->internal.type = SwtiTypeArray;
-    self->internal.name = tc_str_dup("Array");
+    self->internal.name = "Array";
     self->internal.hash = 0x0000;
 }
 
 void swtiInitList(SwtiListType* self)
 {
     self->internal.type = SwtiTypeList;
-    self->internal.name = tc_str_dup("List");
+    self->internal.name = "List";
     self->internal.hash = 0x0000;
     self->internal.index = 0xffff;
 }
@@ -100,7 +100,7 @@ void swtiInitList(SwtiListType* self)
 void swtiInitFunction(SwtiFunctionType* self, const SwtiType** types, size_t typeCount, ImprintAllocator* allocator)
 {
     self->internal.type = SwtiTypeFunction;
-    self->internal.name = tc_str_dup("Function");
+    self->internal.name = "Function";
     self->internal.hash = 0x0000;
     self->parameterCount = typeCount;
     self->parameterTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, const SwtiType*, typeCount);
@@ -156,7 +156,7 @@ int swtiVerifyTuple(const SwtiTupleType* self)
 void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[], size_t typeCount, ImprintAllocator* allocator)
 {
     self->internal.type = SwtiTypeTuple;
-    self->internal.name = tc_str_dup("Tuple");
+    self->internal.name = "Tuple";
     self->internal.hash = 0x0000;
     self->fieldCount = typeCount;
 
@@ -171,7 +171,7 @@ void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[],
 void swtiInitRecord(SwtiRecordType* self)
 {
     self->internal.type = SwtiTypeRecord;
-    self->internal.name = tc_str_dup("Record");
+    self->internal.name = "Record";
     self->internal.hash = 0x0000;
     self->fieldCount = 0;
     self->fields = 0;
