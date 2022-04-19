@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 #include <clog/clog.h>
 #include <flood/out_stream.h>
+#include <imprint/allocator.h>
 #include <swamp-typeinfo/add.h>
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/equal.h>
@@ -15,79 +16,13 @@
  * @param types An array of pointers to the types to be stored.
  * @param typeCount The number of items in the \p types array.
  */
-void swtiChunkInit(SwtiChunk* self, const SwtiType** types, size_t typeCount)
+void swtiChunkInit(SwtiChunk* self, const SwtiType** types, size_t typeCount, struct ImprintAllocator* allocator)
 {
-    self->types = tc_malloc_type_count(const SwtiType*, typeCount);
+    self->types = IMPRINT_ALLOC_TYPE_COUNT(allocator, const SwtiType*, typeCount);
     self->typeCount = typeCount;
     tc_memcpy_type(const SwtiType*, self->types, types, typeCount);
 }
 
-static void swtiDestroyType(SwtiType* type)
-{
-    switch (type->type) {
-        case SwtiTypeCustom: {
-            const SwtiCustomType * t = (const SwtiCustomType*) type;
-            //tc_free(t->internal.name);
-            for (size_t i=0; i<t->variantCount; ++i) {
-                tc_free((void*)t->variantTypes[i].name);
-                tc_free((void*)t->variantTypes[i].fields);
-                for (size_t j=0; j<t->variantTypes[i].paramCount; ++j) {
-                    //t->variantTypes[i].fields[j].
-                }
-            }
-            tc_free((void*)t->variantTypes);
-            }          break;
-        case SwtiTypeFunction: {
-            const SwtiFunctionType* t = (const SwtiFunctionType*) type;
-            //tc_free(t->internal.name);
-            tc_free(t->parameterTypes);
-        } break;
-        case SwtiTypeAlias: {
-            const SwtiAliasType* t = (const SwtiAliasType*) type;
-            //tc_free(t->internal.name);
-        }  break;
-        case SwtiTypeRecord:{
-            const SwtiRecordType* t = (const SwtiRecordType*) type;
-            for (size_t i=0; i<t->fieldCount; ++i) {
-                tc_free((void*)t->fields[i].name);
-            }
-            //tc_free(t->internal.name);
-            tc_free((void*)t->fields);
-        } break;
-        case SwtiTypeArray:
-            break;
-        case SwtiTypeList:
-            break;
-        case SwtiTypeString: {
-            const SwtiStringType* t = (const SwtiStringType*) type;
-            //tc_free(t->internal.name);
-        } break;
-        case SwtiTypeInt:
-            break;
-        case SwtiTypeFixed:
-            break;
-        case SwtiTypeBoolean:
-            break;
-        case SwtiTypeBlob:
-            break;
-        case SwtiTypeResourceName:
-            break;
-        case SwtiTypeTuple: {
-            const SwtiTupleType* t = (const SwtiTupleType*) type;
-            tc_free((void*)t->fields);
-        } break;
-        case SwtiTypeChar:
-            break;
-        case SwtiTypeAny:
-            break;
-        case SwtiTypeAnyMatchingTypes:
-            break;
-        case SwtiTypeUnmanaged:
-            break;
-    }
-    tc_free((void*)type->name);
-    tc_free(type);
-}
 
 /***
  * Destroys the chunk.
@@ -95,10 +30,6 @@ static void swtiDestroyType(SwtiType* type)
  */
 void swtiChunkDestroy(SwtiChunk* self)
 {
-    for (size_t i = 0; i < self->typeCount; ++i) {
-        swtiDestroyType((SwtiType*) self->types[i]);
-    }
-    tc_free(self->types);
     self->types = 0;
     self->typeCount = 0;
     self->maxCount = 0;
@@ -173,9 +104,9 @@ int swtiChunkFindDeep(const SwtiChunk* self, const SwtiType* typeToSearchFor)
 
 int swtiChunkInitOnlyOneType(SwtiChunk* targetChunk, const SwtiType *rootType, int* index, struct ImprintAllocator* allocator)
 {
-    swtiChunkInit(targetChunk, 0, 0);
+    swtiChunkInit(targetChunk, 0, 0, allocator);
     targetChunk->maxCount = 8*1024;
-    targetChunk->types = tc_malloc_type_count(const SwtiType*, targetChunk->maxCount);
+    targetChunk->types = IMPRINT_ALLOC_TYPE_COUNT(allocator, const SwtiType*, targetChunk->maxCount);
 
     int rootTypeIndex;
     if ((rootTypeIndex = swtiChunkAddType(targetChunk, rootType, allocator)) < 0) {

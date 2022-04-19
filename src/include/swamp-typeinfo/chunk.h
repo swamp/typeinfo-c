@@ -19,7 +19,7 @@ typedef struct SwtiChunk {
     size_t maxCount;
 } SwtiChunk;
 
-void swtiChunkInit(SwtiChunk* self, const struct SwtiType** types, size_t typeCount);
+void swtiChunkInit(SwtiChunk* self, const struct SwtiType** types, size_t typeCount, struct ImprintAllocator* allocator);
 void swtiChunkDestroy(SwtiChunk* self);
 
 int swtiChunkFind(const SwtiChunk* self, const struct SwtiType* type);
