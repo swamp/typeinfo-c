@@ -97,6 +97,14 @@ static void printAliasType(FldOutStream* fp, SwtiDebugOutputFlags flags, const S
     }
 }
 
+static void printTypeRefIdType(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTypeRefIdType* typeRefId)
+{
+    fldOutStreamWritef(fp, "$%s", typeRefId->referencedType->name);
+}
+
+
+
+
 static void printRecordTypeField(FldOutStream* fp, const SwtiRecordTypeField* field)
 {
     fldOutStreamWritef(fp, "%s : ", field->name);
@@ -191,6 +199,9 @@ void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTyp
             break;
         case SwtiTypeAlias:
             printAliasType(fp, flags, (const SwtiAliasType*) type);
+            break;
+        case SwtiTypeRefId:
+            printTypeRefIdType(fp, flags, (const SwtiTypeRefIdType *) type);
             break;
         case SwtiTypeRecord:
             printRecordType(fp, (const SwtiRecordType*) type);

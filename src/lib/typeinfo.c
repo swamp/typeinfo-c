@@ -28,6 +28,15 @@ void swtiInitChar(SwtiCharType* self)
     self->internal.hash = 0x0000;
 }
 
+
+void swtiInitTypeRefId(SwtiTypeRefIdType * self, const SwtiType* referencedType)
+{
+    self->internal.type = SwtiTypeRefId;
+    self->internal.name = "TypeRefId";
+    self->internal.hash = 0x0000;
+    self->referencedType = referencedType;
+}
+
 void swtiInitInt(SwtiIntType* self)
 {
     self->internal.type = SwtiTypeInt;

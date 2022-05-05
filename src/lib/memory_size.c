@@ -26,6 +26,9 @@ SwtiMemorySize swtiGetMemorySize(const SwtiType* typeToCheck) {
         case SwtiTypeInt: {
             return 4;
         }
+        case SwtiTypeRefId: {
+            return 4;
+        }
         case SwtiTypeChar: {
             return 4;
         }

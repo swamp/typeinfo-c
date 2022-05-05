@@ -32,6 +32,7 @@ typedef enum SwtiTypeValue {
     SwtiTypeResourceName,
     SwtiTypeChar,
     SwtiTypeTuple,
+    SwtiTypeRefId,
     SwtiTypeAny,
     SwtiTypeAnyMatchingTypes,
     SwtiTypeUnmanaged
@@ -111,6 +112,10 @@ SWTI_TYPE_START(AliasType)
 const SwtiType* targetType;
 SWTI_TYPE_END(AliasType)
 
+SWTI_TYPE_START(TypeRefIdType)
+const SwtiType* referencedType;
+SWTI_TYPE_END(TypeRefIdType)
+
 typedef struct SwtiRecordTypeField {
     const SwtiType* fieldType;
     SwtiMemoryOffsetInfo memoryOffsetInfo;
@@ -168,9 +173,12 @@ SWTI_TYPE_START(CharType)
 SWTI_TYPE_END(CharType)
 
 
+
+
 void swtiInitString(SwtiStringType* self);
 void swtiInitResourceName(SwtiResourceNameType* self);
 void swtiInitChar(SwtiCharType* self);
+void swtiInitTypeRefId(SwtiTypeRefIdType * self, const SwtiType* targetType);
 void swtiInitInt(SwtiIntType* self);
 void swtiInitAny(SwtiAnyType* self);
 void swtiInitUnmanaged(SwtiUnmanagedType* self, uint16_t userTypeId, const char* name, struct ImprintAllocator* allocator);
