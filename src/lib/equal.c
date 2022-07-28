@@ -84,7 +84,7 @@ static int customEqual(const SwtiCustomType* a, const SwtiCustomType* b)
 
     int error;
     for (size_t i = 0; i < a->variantCount; ++i) {
-        if ((error = variantEqual(&a->variantTypes[i], &b->variantTypes[i])) != 0) {
+        if ((error = variantEqual(a->variantTypes[i], b->variantTypes[i])) != 0) {
             return error;
         }
     }

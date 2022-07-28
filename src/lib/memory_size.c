@@ -23,6 +23,10 @@ SwtiMemorySize swtiGetMemorySize(const SwtiType* typeToCheck) {
             const SwtiCustomType* customType = (const SwtiCustomType*) typeToCheck;
             return customType->memoryInfo.memorySize;
         }
+        case SwtiTypeCustomVariant: {
+            const SwtiCustomTypeVariant * variantType = (const SwtiCustomTypeVariant*) typeToCheck;
+            return variantType->memoryInfo.memorySize;
+        }
         case SwtiTypeInt: {
             return 4;
         }

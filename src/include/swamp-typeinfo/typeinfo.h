@@ -19,6 +19,7 @@ typedef enum SwtiDebugOutputFlags {
 // Must be the same as github.com/swamp/compiler/src/typeinfo/typeinfo_serialize.go
 typedef enum SwtiTypeValue {
     SwtiTypeCustom,
+    SwtiTypeCustomVariant,
     SwtiTypeFunction,
     SwtiTypeAlias,
     SwtiTypeRecord,
@@ -77,17 +78,20 @@ typedef struct SwtiCustomTypeVariantField {
     SwtiMemoryOffsetInfo memoryOffsetInfo;
 } SwtiCustomTypeVariantField;
 
-typedef struct SwtiCustomTypeVariant {
+struct SwtiCustomType;
+
+SWTI_TYPE_START(CustomTypeVariant)
+    const struct SwtiCustomType* inCustomType;
     uint8_t paramCount;
     const SwtiCustomTypeVariantField* fields;
     const char* name;
     SwtiMemoryInfo memoryInfo;
-} SwtiCustomTypeVariant;
+SWTI_TYPE_END(CustomTypeVariant)
 
 SWTI_TYPE_START(CustomType)
 SwtiGenericParams generic;
 size_t variantCount;
-const SwtiCustomTypeVariant* variantTypes;
+const SwtiCustomTypeVariant** variantTypes;
 SwtiMemoryInfo memoryInfo;
 SWTI_TYPE_END(CustomType)
 
@@ -194,7 +198,7 @@ void swtiInitAlias(SwtiAliasType* self, const char* name, const SwtiType* target
 void swtiInitCustom(SwtiCustomType* self, const char* name,  const SwtiCustomTypeVariant variants[], size_t variantCount, struct ImprintAllocator* allocator);
 void swtiInitCustomWithGenerics(SwtiCustomType* self, const char* name, const SwtiType* types[], size_t typeCount,
                                 const SwtiCustomTypeVariant variants[], size_t variantCount, struct ImprintAllocator* allocator);
-
+void swtiInitVariant(SwtiCustomTypeVariant* self, const SwtiCustomTypeVariantField sourceFields[], size_t typeCount, struct ImprintAllocator* allocator);
 void swtiInitArray(SwtiArrayType* self);
 void swtiInitList(SwtiListType* self);
 void swtiDebugOutput(struct FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiType* type);

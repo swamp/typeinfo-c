@@ -46,7 +46,7 @@ static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const 
     SwtiCustomType* custom = IMPRINT_ALLOC_TYPE(allocator, SwtiCustomType);
     swtiInitCustom(custom, tc_str_dup(source->internal.name), 0, 0, allocator);
 
-    custom->variantTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiCustomTypeVariant, source->variantCount);
+    custom->variantTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, const SwtiCustomTypeVariant*, source->variantCount);
     custom->variantCount = source->variantCount;
 
 
@@ -54,7 +54,7 @@ static int addCustomType(SwtiChunk* target, const SwtiCustomType* source, const 
 
     int error;
     for (size_t i = 0; i < source->variantCount; ++i) {
-        if ((error = addCustomTypeVariant(target, &source->variantTypes[i],
+        if ((error = addCustomTypeVariant(target, source->variantTypes[i],
                                           (SwtiCustomTypeVariant*) &custom->variantTypes[i], allocator)) != 0) {
             return error;
         }

@@ -176,6 +176,20 @@ void swtiInitTuple(SwtiTupleType* self, const SwtiTupleTypeField sourceFields[],
     }
 }
 
+void swtiInitVariant(SwtiCustomTypeVariant* self, const SwtiCustomTypeVariantField sourceFields[], size_t typeCount, ImprintAllocator* allocator)
+{
+    self->internal.type = SwtiTypeCustomVariant;
+    self->internal.name = "Variant";
+    self->internal.hash = 0x0000;
+    self->paramCount = typeCount;
+
+    self->fields = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiCustomTypeVariantField, typeCount);
+    for (size_t i=0; i<self->paramCount; ++i) {
+        ((SwtiCustomTypeVariantField *)&self->fields[i])->memoryOffsetInfo = sourceFields[i].memoryOffsetInfo;
+        //*(char **)&self->fields[i].name = tc_str_dup(sourceFields[i].name);
+    }
+}
+
 
 void swtiInitRecord(SwtiRecordType* self)
 {
@@ -200,7 +214,7 @@ void swtiInitCustom(SwtiCustomType* self, const char* name, const SwtiCustomType
     self->internal.name = name;
     self->internal.hash = 0x0000;
     self->variantCount = variantCount;
-    self->variantTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, SwtiCustomTypeVariant, variantCount);
+    self->variantTypes = IMPRINT_CALLOC_TYPE_COUNT(allocator, const SwtiCustomTypeVariant*, variantCount);
     self->generic.genericTypes = 0;
     self->generic.genericCount = 0;
     tc_memcpy_type_n(self->variantTypes, variants, variantCount);

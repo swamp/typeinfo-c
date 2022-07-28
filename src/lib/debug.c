@@ -55,7 +55,7 @@ static void printCustomType(FldOutStream* fp, const SwtiCustomType* custom)
         if (i > 0) {
             fldOutStreamWrites(fp, " | ");
         }
-        const SwtiCustomTypeVariant* sub = &custom->variantTypes[i];
+        const SwtiCustomTypeVariant* sub = custom->variantTypes[i];
         printCustomTypeVariant(fp, sub);
     }
     fldOutStreamWrites(fp, ")");
@@ -193,6 +193,9 @@ void swtiDebugOutput(FldOutStream* fp, SwtiDebugOutputFlags flags, const SwtiTyp
     switch (type->type) {
         case SwtiTypeCustom:
             printCustomType(fp, (const SwtiCustomType*) type);
+            break;
+        case SwtiTypeCustomVariant:
+            printCustomTypeVariant(fp, (const SwtiCustomTypeVariant*) type);
             break;
         case SwtiTypeFunction:
             printFunctionType(fp, (const SwtiFunctionType*) type);

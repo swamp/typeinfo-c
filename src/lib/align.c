@@ -31,6 +31,10 @@ SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type) {
             const SwtiCustomType* custom = (const SwtiCustomType*) type;
             return custom->memoryInfo.memoryAlign;
         } break;
+        case SwtiTypeCustomVariant: {
+            const SwtiCustomTypeVariant* variant = (const SwtiCustomTypeVariant*) type;
+            return variant->memoryInfo.memoryAlign;
+        } break;
         case SwtiTypeAlias: {
             const SwtiAliasType* alias = (const SwtiAliasType*) type;
             return swtiGetMemoryAlign(alias->targetType);
