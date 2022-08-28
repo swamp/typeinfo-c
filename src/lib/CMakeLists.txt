@@ -35,5 +35,6 @@ target_include_directories(swamp_typeinfo PRIVATE ${deps}swamp/runtime-c/src/inc
 target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/tiny-libc/src/include)
 target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/flood-c/src/include)
 target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/clog/src/include)
+target_include_directories(swamp_typeinfo PRIVATE ${deps}piot/imprint/src/include)
 target_include_directories(swamp_typeinfo PUBLIC ../include)
 

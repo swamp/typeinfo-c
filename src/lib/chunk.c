@@ -9,7 +9,6 @@
 #include <swamp-typeinfo/chunk.h>
 #include <swamp-typeinfo/equal.h>
 #include <swamp-typeinfo/typeinfo.h>
-#include <tiny-libc/tiny_libc.h>
 
 /**
  * Initializes the type information for a package. The @p types are copied.
