@@ -16,15 +16,15 @@ SwtiMemoryAlign swtiGetMemoryAlign(const SwtiType* type) {
             return tuple->memoryInfo.memoryAlign;
         } break;
         case SwtiTypeList: {
-            const SwtiListType* list = (const SwtiListType*) type;
+            //const SwtiListType* list = (const SwtiListType*) type;
             return 8;
         } break;
         case SwtiTypeArray: {
-            const SwtiArrayType* array = (const SwtiArrayType*) type;
+            //const SwtiArrayType* array = (const SwtiArrayType*) type;
             return 8;
         } break;
         case SwtiTypeBlob: {
-            const SwtiBlobType* blobType = (const SwtiBlobType*) type;
+            //const SwtiBlobType* blobType = (const SwtiBlobType*) type;
             return 8;
         } break;
         case SwtiTypeCustom: {

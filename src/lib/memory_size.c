@@ -40,15 +40,15 @@ SwtiMemorySize swtiGetMemorySize(const SwtiType* typeToCheck) {
             return 1;
         }
         case SwtiTypeList: {
-            const SwtiListType* listType = (const SwtiListType*) typeToCheck;
+            //const SwtiListType* listType = (const SwtiListType*) typeToCheck;
             return 8; //listType->memoryInfo.memorySize;
         }
         case SwtiTypeArray: {
-            const SwtiArrayType* arrayType = (const SwtiArrayType*) typeToCheck;
+            //const SwtiArrayType* arrayType = (const SwtiArrayType*) typeToCheck;
             return 8; //arrayType->memoryInfo.memorySize;
         }
         case SwtiTypeBlob: {
-            const SwtiBlobType* blobType = (const SwtiBlobType*) typeToCheck;
+            //const SwtiBlobType* blobType = (const SwtiBlobType*) typeToCheck;
             return 8;
         }
         case SwtiTypeUnmanaged: {
